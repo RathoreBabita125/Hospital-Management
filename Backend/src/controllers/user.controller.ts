@@ -1,3 +1,8 @@
+/**
+ * User GraphQL resolvers.
+ * Handles user authentication, registration,
+ * password management, and account operations.
+ */
 import { UserDetails, UserResponse } from "../data/datatypes.ts";
 import { validateUserData } from "../validators/userValidator.ts";
 import { AppDataSource } from "../config/db.ts";
@@ -9,6 +14,10 @@ import jwt from 'jsonwebtoken';
 
 export const userResolvers = {
     Query: {
+        /**
+         * Retrieves all registered users
+         * along with their assigned roles.
+        */
         getUsers:async() =>{
             const userRepo = AppDataSource.getRepository(User);
             const allUsers = await userRepo.find({
@@ -21,6 +30,11 @@ export const userResolvers = {
     },
 
     Mutation: {
+        /**
+         * Registers a new patient account.
+         * Validates input, hashes the password,
+         * and assigns the default Patient role.
+        */
         register: async (_: any, userData: UserDetails): Promise<UserResponse> => {
             const inputField: string[] = ["userName", "email", "password", "confirmPassword", "phone", "age", "gender", "address", "bloodGroup"];
             const isValiduser = validateUserData(userData, inputField);
@@ -58,6 +72,10 @@ export const userResolvers = {
             };
         },
 
+        /**
+         * Authenticates a user and generates
+         * a JWT access token.
+        */
         login: async (_: any, userData: UserDetails, context: any) => {           
             const inputField: string[] = ["email", "password"];
             const isValiduser = validateUserData(userData, inputField);
@@ -101,6 +119,10 @@ export const userResolvers = {
             }
         },
 
+        /**
+         * Resets the user's password
+         * after validating the request.
+        */
         forget: async (_: any, userData: UserDetails): Promise<UserResponse> => {
             const inputField: string[] = ["email", "newPassword", "confirmPassword"];
             const isValidUser = validateUserData(userData, inputField);
@@ -122,6 +144,10 @@ export const userResolvers = {
             }
         },
 
+        /**
+         * Changes the password for
+         * the authenticated user.
+        */
         changePassword: async (_: any, userData: UserDetails, context:any): Promise<UserResponse> => {
             const inputField: string[] = ["password", "newPassword", "confirmPassword"];
             const isValidUser = validateUserData(userData, inputField);
@@ -162,6 +188,10 @@ export const userResolvers = {
             }
         },
 
+        /**
+         * Logs out the current user
+         * by clearing the authentication cookie.
+        */
         logout:async(_: any, userData: UserDetails, context:any): Promise<UserResponse>=>{
             context.res.clearCookie("token", {
                 httpOnly: true,

@@ -1,5 +1,10 @@
 import {gql} from 'graphql-tag';
 
+/**
+ * User GraphQL schema.
+ * Defines user-related types, authentication responses,
+ * queries, and mutations for user management.
+ */
 export const userSchema=gql`
     type User{
         id:ID!

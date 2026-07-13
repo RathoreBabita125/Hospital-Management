@@ -1,5 +1,9 @@
+/**
+ * Doctor GraphQL schema.
+ * Defines doctor-related types, queries,
+ * and mutations for managing doctor profiles.
+*/
 import {gql} from 'graphql-tag';
-
 export const doctorSchema=gql`
     type Doctor{
         id:ID
@@ -18,7 +22,12 @@ export const doctorSchema=gql`
     }
 
     type Query{
-        getDoctors:[Doctor]
+        getDoctors(
+            userName: String
+            department: String
+            specialization: String
+            availableDate: Date
+        ):[Doctor]
     }
 
     type Mutation{

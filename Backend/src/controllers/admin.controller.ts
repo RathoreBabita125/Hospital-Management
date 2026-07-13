@@ -1,3 +1,10 @@
+/**
+ * Admin GraphQL resolvers.
+ * Handles doctor management operations such as
+ * retrieving, creating, updating, deleting,
+ * and changing doctor status.
+ */
+import { ILike } from "typeorm";
 import { AppDataSource } from "../config/db.ts";
 import { DoctorDetails } from "../data/datatypes.ts";
 import { Doctor } from "../modals/doctor.ts";
@@ -7,31 +14,49 @@ import { validateDoctor } from "../validators/doctorValidator.ts";
 
 export const adminResolvers = {
     Query: {
-        getDoctors: async () => {
+
+        // Fetch all registered doctors.
+        getDoctors: async (_:any, doctorData:DoctorDetails) => {
             const doctorRepo = AppDataSource.getRepository(Doctor);
-            const allDoctors = await doctorRepo.find();
-            return allDoctors;
+            const where: any = {};
+            if (doctorData.department) {
+                where.categoryName = ILike(`%${doctorData.department}%`);
+            }
+            if (doctorData.userName) {
+                where.slug = ILike(`%${doctorData.userName}%`);
+            }
+            if (doctorData.specialization) {
+                where.description = ILike(`%${doctorData.specialization}%`);
+            }
+            return await doctorRepo.find({ where, relations:{user:true}});
         }
     },
 
     Mutation: {
+
+        /**
+         * Adds a new doctor.
+         * Accessible only to users with the Admin role.
+         * Creates both User and Doctor records.
+        */
         addDoctor: async (_: any, doctorData: DoctorDetails, context: any) => {
             const roleRepo = AppDataSource.getRepository(Role);
             const userRepo = AppDataSource.getRepository(User);
 
+            // Validate doctor input fields
             const inputField=["department", "specialization", "experience", "consultationFee"]
             const valid=validateDoctor(doctorData, inputField);
 
             if(!valid){
                 throw new Error("Enter valid details.")
             }
-
             const adminRole = await roleRepo.findOne({
                 where: {
                     id: context.user.role
                 }
             });
 
+             // Verify admin authorization
             if (adminRole?.roleName === "Admin") {
                 const doctorRole = await roleRepo.findOne({
                     where: {
@@ -42,6 +67,7 @@ export const adminResolvers = {
                     throw new Error("Doctor role not found");
                 }
 
+                // Prevent duplicate doctor registration
                 const doctorRepo = AppDataSource.getRepository(Doctor);
                 const user = await userRepo.findOne({
                     where: {
@@ -51,6 +77,8 @@ export const adminResolvers = {
                 if (user) {
                     throw new Error("Doctor is already existed.");
                 }
+
+                // Create user account for doctor
                 const newUser = userRepo.create({
                     userName: doctorData.userName,
                     email: doctorData.email,
@@ -61,6 +89,7 @@ export const adminResolvers = {
 
                 const savedUser = await userRepo.save(newUser);
 
+                // Create doctor profile linked to the user
                 const newDoctor = doctorRepo.create({
                     department: doctorData.department,
                     specialization: doctorData.specialization,
@@ -81,6 +110,10 @@ export const adminResolvers = {
             }
         },
 
+        /**
+         * Updates an existing doctor's information.
+         * Accessible only to Admin users.
+        */
         editDoctor: async (_: any, doctorData: DoctorDetails, context: any) => {
             const roleRepo = AppDataSource.getRepository(Role);
             const userRepo = AppDataSource.getRepository(User);
@@ -96,9 +129,11 @@ export const adminResolvers = {
                     id: context.user.role
                 }
             });
-
+            
             if (role?.roleName === "Admin") {
                 const doctorRepo = AppDataSource.getRepository(Doctor);
+
+                // Retrieve doctor with associated user details
                 const doctor = await doctorRepo.findOne({
                     where: {
                         id: doctorData.id
@@ -112,6 +147,7 @@ export const adminResolvers = {
                     throw new Error("Doctor does not exist.");
                 }
 
+                // Update user and doctor information
                 doctor.user.userName=doctorData.userName;
                 doctor.user.email=doctorData.email;
                 doctor.user.password=doctorData.password;
@@ -135,6 +171,10 @@ export const adminResolvers = {
             }
         },
 
+        /**
+         * Deletes a doctor and the associated user account.
+         * Accessible only to Admin users.
+        */
         deleteDoctor: async (_: any, doctorData: DoctorDetails, context: any) => {
             const roleRepo = AppDataSource.getRepository(Role);
             const role = await roleRepo.findOne({
@@ -160,6 +200,7 @@ export const adminResolvers = {
                 }
                 const userId= doctor.user.id;
                 
+                // Delete associated user record
                 await doctorRepo.remove(doctor);
                 await userRepo.delete(userId);
                 return {
@@ -172,6 +213,10 @@ export const adminResolvers = {
             }
         },
 
+        /**
+         * Marks a doctor as inactive.
+         * Accessible only to Admin users.
+         */
         changeDoctorStatus: async (_: any, doctorData: DoctorDetails, context: any) => {
             const roleRepo = AppDataSource.getRepository(Role);
             const role = await roleRepo.findOne({
@@ -189,6 +234,8 @@ export const adminResolvers = {
                 if (!doctor) {
                     throw new Error("Doctor does not exist.")
                 }
+
+                // update doctor status
                 doctor.status = false;
                 await doctorRepo.save(doctor);
                 return {

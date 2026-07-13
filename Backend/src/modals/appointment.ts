@@ -1,20 +1,22 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Doctor } from "./doctor.ts";
+import { User } from "./user.ts";
+import { AppointmentStatus } from "../data/datatypes.ts";
+import { Document } from "./document.ts";
 
-enum AppointmentStatus{
-    CONFIRMED="CONFIRMED",
-    PENDING="PENDING",
-    COMPLETED="COMPLETED",
-    CANCELLED="CANCELLED"
-}
-
+/**
+ * Appointment entity.
+ * Represents an appointment scheduled between
+ * a patient and a doctor.
+ */
 @Entity()
 export class Appointment{
+    // Unique identifier for the appointment
     @PrimaryGeneratedColumn()
     id!:number;
 
     @Column({type:'text'})
-    departmentName!:string;
+    department!:string;
 
     @Column({type:'date'})
     availableDate!:Date;
@@ -23,10 +25,20 @@ export class Appointment{
     timeSlot!:string;
 
     @Column({type:'enum',enum:AppointmentStatus, default:AppointmentStatus.PENDING})
-    appointmentStatus!:AppointmentStatus;
+    status!:AppointmentStatus;
+
+    @CreateDateColumn({type:'date'})
+    createdAt!:Date;
+
+    @UpdateDateColumn({type:'date'})
+    updatedAt!:Date;
 
     @ManyToOne(()=>Doctor, (doctor)=>doctor.appointment)
     doctor!:Doctor;
 
-//    @ManyToOne(()=)
+    @ManyToOne(()=>User)
+    user!:User;
+
+    @OneToMany(()=>Document, (document)=>document.appointment)
+    document!:Document[]
 }

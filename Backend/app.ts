@@ -1,3 +1,8 @@
+/**
+ * Application entry point.
+ * Initializes database connection, seeds initial data,
+ * configures Express middleware, and starts GraphQL server.
+ */
 import "reflect-metadata"
 import express from 'express';
 import dotenv from 'dotenv';
@@ -19,6 +24,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 
+/**
+ * Starts the application server.
+ * Connects database, initializes seed data,
+ * and configures Apollo GraphQL server.
+ */
 const startServer = async () => {
   try {
     await AppDataSource.initialize();
@@ -50,6 +60,7 @@ const startServer = async () => {
       })
     );
 
+    // Start Express server
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}/graphql`);
     });

@@ -2,8 +2,14 @@ import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn
 import { Appointment } from "./appointment.ts";
 import { User } from "./user.ts";
 
+/**
+ * Doctor entity.
+ * Stores professional details of doctors
+ * and links each doctor to a user account.
+ */
 @Entity()
 export class Doctor{
+    // Unique identifier for the doctor
     @PrimaryGeneratedColumn()
     id!:number;
 

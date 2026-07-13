@@ -1,8 +1,13 @@
 import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from 'typeorm'
 import { Role } from './role.ts';
-
+/**
+ * User entity.
+ * Stores authentication and basic user information
+ * along with assigned application role.
+*/
 @Entity()
 export class User{
+    // Unique identifier for the user
     @PrimaryGeneratedColumn()
     id!: number;
 

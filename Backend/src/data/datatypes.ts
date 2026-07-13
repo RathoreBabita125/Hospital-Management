@@ -16,19 +16,44 @@ export type UserDetails = {
 
 export interface UserResponse {
   message?: string;
-  token?:string;
+  token?: string;
 }
 
-export type DoctorDetails={
-  id:number;
-  userName:string;
-  email:string;
-  password:string;
-  phone:string;
-  department:string;
-  specialization:string;
-  experience:number;
-  availableDays:Date;
-  consultationFee:number
-  status:boolean
+export type DoctorDetails = {
+  id: number;
+  userName: string;
+  email: string;
+  password: string;
+  phone: string;
+  department: string;
+  specialization: string;
+  experience: number;
+  availableDays: Date;
+  consultationFee: number
+  status: boolean
+}
+
+export enum AppointmentStatus {
+  CONFIRMED = "CONFIRMED",
+  PENDING = "PENDING",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED"
+}
+
+export type PrescriptionDetails = {
+  id: number;
+  medicine: string[];
+  dosage: string;
+  duration: string;
+  instructions: string;
+  appointment: number;
+}
+
+export type DocumentDetails = {
+  id: number;
+  fileName: string;
+  fileType: string;
+  fileUrl: string;
+  documentType: string;
+  appointment:number
 }

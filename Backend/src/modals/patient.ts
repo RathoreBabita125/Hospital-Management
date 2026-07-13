@@ -1,8 +1,14 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.ts";
 
+/**
+ * Patient entity.
+ * Stores patient-specific information
+ * linked with a user account.
+*/
 @Entity()
 export class Patient {
+    // Unique identifier for the patient
     @PrimaryGeneratedColumn()
     id!: number
 

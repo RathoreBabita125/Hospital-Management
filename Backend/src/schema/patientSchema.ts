@@ -1,6 +1,11 @@
-import {gql} from 'graphql-tag';
+import { gql } from 'graphql-tag';
 
-export const patientSchema=gql`
+/**
+ * Patient GraphQL schema.
+ * Defines patient-related types and mutations
+ * for managing patient profile information.
+*/
+export const patientSchema = gql`
     type Patient{
         id:ID
         gender:String
@@ -27,4 +32,5 @@ export const patientSchema=gql`
             user:ID
         ):PatientResponse
     }
+
 `;
