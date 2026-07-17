@@ -4,7 +4,16 @@
  * and mutations for managing doctor profiles.
 */
 import {gql} from 'graphql-tag';
+
 export const doctorSchema=gql`
+
+    type User{
+        userName:String!
+        email:String!
+        password:String!
+        phone:String!
+    }
+
     type Doctor{
         id:ID
         department:String!
@@ -45,7 +54,7 @@ export const doctorSchema=gql`
             user:ID
         ):DoctorResponse
 
-        editDoctor(
+        updateDoctor(
             id:ID!
             userName:String!
             email:String!

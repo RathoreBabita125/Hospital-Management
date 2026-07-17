@@ -8,6 +8,15 @@ import { gql } from 'graphql-tag';
  */
 
 export const appointmentSchema = gql`
+
+    type User {
+        id: ID!
+        userName: String!
+        email: String!
+        phone: String!
+        patient: Patient
+    }
+
     type Appointment{
         id:ID!
         department:String!
@@ -16,6 +25,7 @@ export const appointmentSchema = gql`
         status:String
         doctor:Doctor
         user:User
+        createdAt:Date
     }
 
     type AppointmentResponse{
@@ -26,6 +36,7 @@ export const appointmentSchema = gql`
     type Query{
         viewUpcomingAppointments:[Appointment]
         todayAppointments:[Appointment]
+        getAppointments:[Appointment]
     }
 
     type Mutation{

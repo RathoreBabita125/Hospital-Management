@@ -16,6 +16,7 @@ export const prescriptionSchema=gql`
     }
 
     type Query{
+        getAllPrescriptions:[Prescription]
         getPrescriptions:[Prescription]
     }
 

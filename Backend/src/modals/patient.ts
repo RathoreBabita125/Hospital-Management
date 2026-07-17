@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.ts";
 
 /**
@@ -6,6 +6,7 @@ import { User } from "./user.ts";
  * Stores patient-specific information
  * linked with a user account.
 */
+
 @Entity()
 export class Patient {
     // Unique identifier for the patient
@@ -26,10 +27,11 @@ export class Patient {
 
     @Column({ type: 'date' })
     dateOfBirth!: Date
-
+    
     @Column({type:"varchar", length:15})
     emergencyNumber!:string
 
     @OneToOne(()=>User)
+    @JoinColumn()
     user!:User
 }

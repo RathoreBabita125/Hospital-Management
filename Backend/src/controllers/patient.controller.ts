@@ -11,47 +11,80 @@ import { Doctor } from "../modals/doctor.ts";
 import { Role } from "../modals/role.ts";
 import { User } from "../modals/user.ts";
 import bcrypt from 'bcrypt';
+import { Patient } from "../modals/patient.ts";
 
 export const patientResolvers = {
     Query: {
-    
+        getAppointments: async (_: any, __: any, context: any) => {
+            const appointmentRepo = AppDataSource.getRepository(Appointment);
+            const allAppointments = await appointmentRepo.find({
+                relations: {
+                    doctor: {
+                        user: true
+                    },
+                    user: {
+                        patient: true
+                    }
+                }
+            });
+            return allAppointments;
+        }
     },
 
     Mutation: {
-        /**
-         * Updates the logged-in patient's profile information.
-         * Password is securely hashed before saving.
-        */
-        updateProfile: async (_: any, userData: UserDetails, context: any) => {
-
+       
+        completePatientProfile: async (_: any, patientData: any, context: any) => {
+            const patientRepo = AppDataSource.getRepository(Patient);
             const userRepo = AppDataSource.getRepository(User);
-            const user = await userRepo.findOne({ where: { id: userData.id } });
+            
+            if (!context.user) {
+                throw new Error("First register to complete profile.");
+            }
 
-            const roleRepo = AppDataSource.getRepository(Role);
-            const role = await roleRepo.findOne({ where: { id: context.user.role } });
+            const user = await userRepo.findOne({
+                where: {
+                    id: context.user.id
+                }
+            });
 
             if (!user) {
-                throw new Error("User Not Found");
+                throw new Error("User not found");
             }
-            if (!role) {
-                throw new Error("Role Not Found");
-            }
-            const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-            console.log("inside update profile", role?.roleName);
+            const existingPatient = await patientRepo.findOne({
+                where: {
+                    user: {
+                        id: user.id
+                    }
+                },
+                relations: {
+                    user: true
+                }
+            });
 
-            if (role?.roleName === "Patient") {
-                user.userName = userData.userName,
-                    user.email = userData.email,
-                    user.password = hashedPassword,
-                    user.phone = userData.phone
+            if (existingPatient) {
+                throw new Error("Profile already completed.");
             }
-            await userRepo.save(user);
+
+            const patient = patientRepo.create({
+                age: patientData.age,
+                gender: patientData.gender,
+                bloodGroup: patientData.bloodGroup,
+                address: patientData.address,
+                dateOfBirth: patientData.dateOfBirth,
+                emergencyNumber: patientData.emergencyNumber,
+                user
+            });
+
+            await patientRepo.save(patient);
+
             return {
-                message: "You have successfully updated profile.",
-                patient: user
+                message: "Profile completed successfully.",
+                patient
             };
         },
+
+
 
         /**
          * Books a new appointment with a doctor.
@@ -63,10 +96,16 @@ export const patientResolvers = {
             const userRepo = AppDataSource.getRepository(User);
 
             // Retrieve patient and doctor records
-            const user = await userRepo.findOne({ where: { id: context.user.id } });
+            // const user = await userRepo.findOne({ where: { id: context.user.id } });
+            const user = await userRepo.findOne({ where: { id: appointmentData.user } });
             const doctorRepo = AppDataSource.getRepository(Doctor);
             const doctor = await doctorRepo.findOne({ where: { id: appointmentData.doctor } });
-
+            
+            //validation
+            const { availableDate, timeSlot, department } = appointmentData;
+            if (!availableDate || !timeSlot || !department) {
+                throw new Error("This field is required.")
+            }
             if (!user) {
                 throw ("Patient does not exist.");
             }
@@ -104,10 +143,10 @@ export const patientResolvers = {
             }
         },
 
-         /**
-         * Reschedules an existing appointment.
-         * Only future appointments can be rescheduled.
-         */
+        /**
+        * Reschedules an existing appointment.
+        * Only future appointments can be rescheduled.
+        */
         rescheduleAppointment: async (_: any, appointmentData: any, context: any) => {
             const appointmentRepo = AppDataSource.getRepository(Appointment);
             const appointment = await appointmentRepo.findOne({
@@ -176,6 +215,47 @@ export const patientResolvers = {
             return {
                 message: "Appointment cancelled successfully.",
                 appointment
+            };
+        },
+
+        addPatient: async (_: any, patientData: any, context: any) => {
+            const patientRepo = AppDataSource.getRepository(Patient);
+            const userRepo = AppDataSource.getRepository(User);
+
+            const user = await userRepo.findOne({
+                where: {
+                    id: patientData.user
+                }
+            })
+            const existingPatient = await patientRepo.findOne({
+                where: {
+                    id: patientData.user
+                }
+            });
+
+            if (!user) {
+                throw new Error("Patient not found.")
+            }
+
+            if (existingPatient) {
+                throw new Error("Patient is already existed.");
+            }
+
+            const patient = patientRepo.create({
+                age: patientData.age,
+                gender: patientData.gender,
+                bloodGroup: patientData.bloodGroup,
+                address: patientData.address,
+                dateOfBirth: patientData.dateOfBirth,
+                emergencyNumber: patientData.emergencyNumber,
+                user: user
+            });
+
+            await patientRepo.save(patient);
+
+            return {
+                message: "Patient details has been added successfully.",
+                patient
             };
         }
     }

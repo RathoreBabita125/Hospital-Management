@@ -11,12 +11,15 @@ import { Doctor } from "../modals/doctor.ts";
 import { Role } from "../modals/role.ts";
 import { User } from "../modals/user.ts";
 import { validateDoctor } from "../validators/doctorValidator.ts";
+import bcrypt from 'bcrypt';
+import { Appointment } from "../modals/appointment.ts";
+import { doctorInputFields, inputField } from "../constants/const.ts";
 
 export const adminResolvers = {
     Query: {
 
         // Fetch all registered doctors.
-        getDoctors: async (_:any, doctorData:DoctorDetails) => {
+        getDoctors: async (_: any, doctorData: DoctorDetails) => {
             const doctorRepo = AppDataSource.getRepository(Doctor);
             const where: any = {};
             if (doctorData.department) {
@@ -28,7 +31,7 @@ export const adminResolvers = {
             if (doctorData.specialization) {
                 where.description = ILike(`%${doctorData.specialization}%`);
             }
-            return await doctorRepo.find({ where, relations:{user:true}});
+            return await doctorRepo.find({ where, relations: { user: true } });
         }
     },
 
@@ -44,10 +47,9 @@ export const adminResolvers = {
             const userRepo = AppDataSource.getRepository(User);
 
             // Validate doctor input fields
-            const inputField=["department", "specialization", "experience", "consultationFee"]
-            const valid=validateDoctor(doctorData, inputField);
+            const valid = validateDoctor(doctorData, doctorInputFields);
 
-            if(!valid){
+            if (!valid) {
                 throw new Error("Enter valid details.")
             }
             const adminRole = await roleRepo.findOne({
@@ -56,7 +58,7 @@ export const adminResolvers = {
                 }
             });
 
-             // Verify admin authorization
+            // Verify admin authorization
             if (adminRole?.roleName === "Admin") {
                 const doctorRole = await roleRepo.findOne({
                     where: {
@@ -78,11 +80,14 @@ export const adminResolvers = {
                     throw new Error("Doctor is already existed.");
                 }
 
+                // hashed password
+                const hashedPassword = await bcrypt.hash(doctorData.password, 10);
+
                 // Create user account for doctor
                 const newUser = userRepo.create({
                     userName: doctorData.userName,
                     email: doctorData.email,
-                    password: doctorData.password,
+                    password: hashedPassword,
                     phone: doctorData.phone,
                     role: doctorRole
                 });
@@ -114,22 +119,23 @@ export const adminResolvers = {
          * Updates an existing doctor's information.
          * Accessible only to Admin users.
         */
-        editDoctor: async (_: any, doctorData: DoctorDetails, context: any) => {
+        updateDoctor: async (_: any, doctorData: DoctorDetails, context: any) => {
+            console.log("updated doctor: ",doctorData);
             const roleRepo = AppDataSource.getRepository(Role);
             const userRepo = AppDataSource.getRepository(User);
-            
-            const inputField=["department", "specialization", "experience", "consultationFee"]
-            const valid=validateDoctor(doctorData, inputField);
-            
-            if(!valid){
-                throw new Error("Enter valid details.")
+
+            //validate doctor input fields
+            const valid = validateDoctor(doctorData, doctorInputFields);
+
+            if (!valid) {
+                throw new Error("Enter valid details.");
             }
             const role = await roleRepo.findOne({
                 where: {
                     id: context.user.role
                 }
             });
-            
+
             if (role?.roleName === "Admin") {
                 const doctorRepo = AppDataSource.getRepository(Doctor);
 
@@ -138,29 +144,31 @@ export const adminResolvers = {
                     where: {
                         id: doctorData.id
                     },
-                    relations:{
-                        user:true
+                    relations: {
+                        user: true
                     }
                 });
-            
+
                 if (!doctor) {
                     throw new Error("Doctor does not exist.");
                 }
 
+                // hashed password
+                const hashedPassword=await bcrypt.hash(doctorData.password, 10);
+
                 // Update user and doctor information
-                doctor.user.userName=doctorData.userName;
-                doctor.user.email=doctorData.email;
-                doctor.user.password=doctorData.password;
-                doctor.user.phone=doctorData.phone;
+                doctor.user.userName = doctorData.userName;
+                doctor.user.email = doctorData.email;
+                doctor.user.password = hashedPassword;
+                doctor.user.phone = doctorData.phone;
                 doctor.department = doctorData.department;
                 doctor.specialization = doctorData.specialization;
                 doctor.experience = doctorData.experience;
                 doctor.availableDays = doctorData.availableDays;
                 doctor.consultationFee = doctorData.consultationFee;
 
-                await doctorRepo.save(doctor);
                 await userRepo.save(doctor.user);
-
+                await doctorRepo.save(doctor);
                 return {
                     message: "Doctor has been updated successfully.",
                     doctor: doctor
@@ -182,24 +190,40 @@ export const adminResolvers = {
                     id: context.user.role
                 }
             });
-            
+
             if (role?.roleName === "Admin") {
                 const doctorRepo = AppDataSource.getRepository(Doctor);
                 const userRepo = AppDataSource.getRepository(User);
+                const appointmentRepo = AppDataSource.getRepository(Appointment);
                 const doctor = await doctorRepo.findOne({
                     where: {
                         id: doctorData.id
                     },
-                    relations:{
-                        user:true
+                    relations: {
+                        user: true
                     }
                 });
-                console.log("user id in doctor table: ", doctor?.user.id);
+
                 if (!doctor) {
                     throw new Error("Doctor does not exist.")
                 }
-                const userId= doctor.user.id;
-                
+
+                const appointment = await appointmentRepo.findOne({
+                    where: {
+                        doctor: {
+                            id: doctor.id
+                        }
+                    }
+                });
+
+                if (appointment) {
+                    throw new Error(
+                        "Doctor cannot be deleted because appointments already exist."
+                    );
+                }
+
+                const userId = doctor.user.id;
+
                 // Delete associated user record
                 await doctorRepo.remove(doctor);
                 await userRepo.delete(userId);

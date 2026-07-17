@@ -5,7 +5,6 @@
  */
 import "reflect-metadata"
 import express from 'express';
-import dotenv from 'dotenv';
 import { AppDataSource } from './src/config/db.ts';
 import { ApolloServer } from "@apollo/server";
 import { resolvers } from "./src/controllers/resolvers.ts";
@@ -16,13 +15,19 @@ import { seedAdmin } from "./src/seed/seedAdmin.ts";
 import cookieParser from 'cookie-parser'
 import cors from "cors";
 import { AuthMiddleware } from "./src/middleware/authMiddleware.ts";
+import dotenv from 'dotenv';
 dotenv.config();
 
 const PORT = process.env.PORT;
+const CLIENT_URL = process.env.CLIENT_URL?.trim();
+
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({
+  origin: CLIENT_URL,
+  credentials:true
+}));
 
 /**
  * Starts the application server.

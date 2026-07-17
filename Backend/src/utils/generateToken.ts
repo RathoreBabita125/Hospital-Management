@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { UserDetails } from '../data/datatypes.ts';
 dotenv.config();
 
 const SECRET_KEY=process.env.SECRET_KEY;

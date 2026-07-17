@@ -8,6 +8,7 @@ import { AppDataSource } from "../config/db.ts";
 import { AppointmentStatus, PrescriptionDetails } from "../data/datatypes.ts";
 import { Appointment } from "../modals/appointment.ts";
 import { Prescription } from "../modals/prescription.ts";
+import { Doctor } from "../modals/doctor.ts";
 
 export const doctorResolver = {
     Query: {
@@ -33,10 +34,10 @@ export const doctorResolver = {
             });
         },
 
-         /**
-         * Retrieves all upcoming appointments
-         * assigned to the logged-in doctor.
-         */
+        /**
+        * Retrieves all upcoming appointments
+        * assigned to the logged-in doctor.
+        */
         viewUpcomingAppointments: async (_: any, __: any, context: any) => {
             const appointmentRepo = AppDataSource.getRepository(Appointment);
 
@@ -51,6 +52,52 @@ export const doctorResolver = {
                     user: true
                 }
             });
+        },
+
+        getAllPrescriptions: async (_: any, __: any, context: any) => {
+            const prescriptionRepo = AppDataSource.getRepository(Prescription);
+            const prescriptions = await prescriptionRepo.find();
+            return prescriptions;
+        },
+
+        getPrescriptions: async (_: any, __: any, context: any) => {
+            const doctorRepo = AppDataSource.getRepository(Doctor);
+            const prescriptionRepo = AppDataSource.getRepository(Prescription);
+
+            // Find logged-in doctor
+            const doctor = await doctorRepo.findOne({
+                where: {
+                    user: {
+                        id: context.user.id
+                    }
+                }
+            });
+
+            if (!doctor) {
+                throw new Error("Doctor not found");
+            }
+
+            // Fetch prescriptions of this doctor
+            const prescriptions = await prescriptionRepo.find({
+                where: {
+                    appointment: {
+                        doctor: {
+                            id: doctor.id
+                        }
+                    }
+                },
+                relations: {
+                    appointment: {
+                        user: {
+                            patient: true
+                        },
+                        doctor: {
+                            user: true
+                        }
+                    }
+                }
+            });
+            return prescriptions;
         }
     },
 
@@ -145,7 +192,7 @@ export const doctorResolver = {
                 throw new Error("Appointment not found");
             }
 
-             // Check if prescription already exists
+            // Check if prescription already exists
             const existingPrescription = await prescriptionRepo.findOne({
                 where: {
                     appointment: {
@@ -158,7 +205,7 @@ export const doctorResolver = {
                 throw new Error("Prescription is already given for this appointment.");
             }
 
-             // Check if prescription already exists
+            // Check if prescription already exists
             const newPrescription = prescriptionRepo.create(
                 {
                     medicine: prescriptionData.medicine,

@@ -8,11 +8,13 @@ import { gql } from 'graphql-tag';
 export const patientSchema = gql`
     type Patient{
         id:ID
+        age: Int!
         gender:String
         bloodGroup:String
         address:String
         role:ID
         dateOfBirth:Date
+        emergencyNumber: String!
         user:User
     }
 
@@ -22,15 +24,24 @@ export const patientSchema = gql`
     }
 
     type Mutation{
-        updateProfile(
-            id:ID
-            gender:String
-            bloodGroup:String
-            address:String
-            role:ID
-            dateOfBirth:Date
-            user:ID
-        ):PatientResponse
-    }
 
+        completePatientProfile(
+            age: Int!
+            gender: String!
+            bloodGroup: String!
+            address: String!
+            dateOfBirth: Date!
+            emergencyNumber: String!
+        ): PatientResponse
+
+        addPatient(
+            age: Int!
+            gender: String!
+            bloodGroup: String!
+            address: String!
+            dateOfBirth: Date!
+            emergencyNumber: String!
+            user:ID
+        ): PatientResponse
+    }
 `;

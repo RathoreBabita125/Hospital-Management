@@ -57,3 +57,15 @@ export type DocumentDetails = {
   documentType: string;
   appointment:number
 }
+
+export type MedicalHistoryDetails={
+  id:number;
+  diagnosis:string;
+  symptoms:string[];
+  allergies:string[];
+  treatmentNotes:string;
+  treatmentPlan:string;
+  recommendedTests:string[];
+  followUpDate:Date;
+  appointment:number;
+}

@@ -1,11 +1,17 @@
-import {gql} from 'graphql-tag';
+import { gql } from 'graphql-tag';
 
 /**
  * User GraphQL schema.
  * Defines user-related types, authentication responses,
  * queries, and mutations for user management.
  */
-export const userSchema=gql`
+export const userSchema = gql`
+
+    type Role {
+        id: ID!
+        roleName: String!
+    }
+        
     type User{
         id:ID!
         userName:String!
@@ -14,7 +20,9 @@ export const userSchema=gql`
         confirmPassword:String!
         newPassword:String
         phone:String!
-        role:User
+        role:Role
+        createdAt:Date
+        patient: Patient
     }
     
     type AuthResponse{
@@ -24,6 +32,7 @@ export const userSchema=gql`
 
     type Query{
         getUsers:[User]
+        getMe:User
     }
 
     type Mutation{
@@ -32,7 +41,7 @@ export const userSchema=gql`
             userName:String
             email:String
             password:String
-            confirmPassword:String!
+            confirmPassword:String
             phone:String
             role:ID
         ):AuthResponse
@@ -44,7 +53,7 @@ export const userSchema=gql`
 
         forget(
             email:String
-            newPassword:String
+            password:String
             confirmPassword:String
         ):AuthResponse
 
@@ -54,6 +63,13 @@ export const userSchema=gql`
             confirmPassword:String
         ):AuthResponse
 
+        updateProfile(
+            userName:String
+            phone:String
+            email:String
+       ):AuthResponse
+
         logout:AuthResponse
+
     }
 `;

@@ -12,6 +12,7 @@ import { Appointment } from '../modals/appointment.ts';
 import { Prescription } from '../modals/prescription.ts';
 import { Patient } from '../modals/patient.ts';
 import { Document } from '../modals/document.ts';
+import { MedicalHistory } from '../modals/medicalHistory.ts';
 
 /**
  * Main database connection instance.
@@ -28,5 +29,5 @@ export const AppDataSource=new DataSource({
     port:5432,
 
     // Registered entity classes
-    entities:[User, Role, Doctor, Patient, Appointment, Prescription, Document]
+    entities:[User, Role, Doctor, Patient, Appointment, Prescription, Document, MedicalHistory]
 });

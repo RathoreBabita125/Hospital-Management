@@ -21,7 +21,7 @@ export class Appointment{
     @Column({type:'date'})
     availableDate!:Date;
 
-    @Column({type:'time'})
+    @Column({type:'text'})
     timeSlot!:string;
 
     @Column({type:'enum',enum:AppointmentStatus, default:AppointmentStatus.PENDING})
