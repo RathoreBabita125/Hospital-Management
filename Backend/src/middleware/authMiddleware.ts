@@ -1,5 +1,5 @@
 /**
- * Authentication middleware.
+ * @module Authentication/middleware.
  * Extracts and verifies the JWT token from cookies
  * and returns the authenticated user's payload.
  */

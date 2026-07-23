@@ -13,6 +13,10 @@ import EditDoctorModal from "../doctorModal/EditDoctorModal";
 import DeleteDoctorModal from "../doctorModal/DeleteDoctorModal";
 import ViewDoctorModal from "../doctorModal/ViewDoctorModal";
 import { PaginationContext } from "../../context/PaginationContext";
+import FilterModal from "../filter/FilterModal";
+import PersonIcon from "@mui/icons-material/Person";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
+import ChangeDoctorStatusModal from "../doctorModal/ChangeDoctorStatus";
 
 const AdminDoctor = () => {
     const [openAddDoctor, setOpenAddDoctor] = useState(false);
@@ -20,9 +24,37 @@ const AdminDoctor = () => {
     const [openDeleteDoctor, setOpenDeleteDoctor] = useState(false);
     const [openViewDoctor, setOpenViewDoctor] = useState(false);
     const [selectedDoctor, setSelectedDoctor] = useState(null);
-    
-    const { data: doctorData, loading: doctorLoading } = useQuery(GETDOCTORS);
-    const {page, rowsPerPage, handleChangePage, handleChangeRowsPerPage}=useContext(PaginationContext);
+    const [openStatusModal, setOpenStatusModal] = useState(false);
+    const [openFilter, setOpenFilter] = useState(false);
+
+    const { page, setPage, rowsPerPage, handleChangePage, handleChangeRowsPerPage } = useContext(PaginationContext);
+
+    const [filter, setFilter] = useState({
+        userName: '',
+        department: '',
+        specialization: '',
+    })
+
+    const { data: doctorData, loading: doctorLoading, refetch } = useQuery(GETDOCTORS, {
+        variables: {
+            userName: filter.userName,
+            department: filter.department,
+            specialization: filter.specialization,
+        },
+    });
+
+    const paginatedDoctors = doctorData?.getDoctors?.slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
+    ) || [];
+
+    const columnOptions = [
+        { label: "Doctor", value: "userName" },
+        { label: "Department", value: "department" },
+        { label: "Specialization", value: "specialization" },
+    ];
+
+    const filterField = ["userName", "department", "specialization"]
 
     if (doctorLoading) return <LoadingCompo />
 
@@ -59,6 +91,7 @@ const AdminDoctor = () => {
                             variant="outlined"
                             startIcon={<FilterListIcon />}
                             sx={{ color: '#00A7B5' }}
+                            onClick={() => setOpenFilter(true)}
                         >
                             Filter
                         </Button>
@@ -76,55 +109,83 @@ const AdminDoctor = () => {
                         <TableHead sx={{ backgroundColor: "#00A7B5", color: 'white', padding: 10 }}>
                             <TableRow sx={{ color: 'white' }}>
                                 <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '2px solid white' }}>S.No.</TableCell>
-                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '1px solid white' }}>Doctor Name</TableCell>
-                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '1px solid white' }}>Phone</TableCell>
-                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '1px solid white' }}>Department</TableCell>
-                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '1px solid white' }}>Specialization</TableCell>
-                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '1px solid white' }}>Experience</TableCell>
-                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '1px solid white' }}>Consultation Fee</TableCell>
-                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '1px solid white' }}>Available Days</TableCell>
-                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '1px solid white' }}>Status</TableCell>
-                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '1px solid white' }}>Actions</TableCell>
+                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '2px solid white' }}>Doctor Name</TableCell>
+                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '2px solid white' }}>Phone</TableCell>
+                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '2px solid white' }}>Department</TableCell>
+                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '2px solid white' }}>Specialization</TableCell>
+                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '2px solid white' }}>Experience</TableCell>
+                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '2px solid white' }}>Consultation Fee</TableCell>
+                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '2px solid white' }}>Available Date</TableCell>
+                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '2px solid white' }}>Status</TableCell>
+                                <TableCell align="center" sx={{ color: 'white', fontSize: 18, border: '2px solid white' }}>Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody sx={{ backgroundColor: "#ffffff" }}>
                             {
-                                doctorData?.getDoctors?.map((doctor, index) => {
+                                paginatedDoctors?.map((doctor, index) => {
                                     return (
                                         <TableRow
                                             hover
                                             key={doctor.id}
-                                            sx={{ backgroundColor: "#ffffff", "&:last-child td": { borderBottom: "none" }, border: '1px solid #b4e8ed' }}
+                                            disabled
+                                            sx={{
+                                                backgroundColor: doctor.status ? "#ffffff" : "#f5f5f5",
+                                                opacity: doctor.status ? 1 : 0.5,
+                                                "&:last-child td": { borderBottom: "none" },
+                                                border: '1px solid #b4e8ed',
+                                            }}
                                         >
-                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{index + 1}</TableCell>
+                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{page * rowsPerPage + index + 1}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{doctor.user.userName}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{doctor.user.phone}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{doctor.department}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{doctor.specialization}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{doctor.experience}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{doctor.consultationFee}</TableCell>
-                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{doctor.availableDays}</TableCell>
-                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{doctor.status && "Active"}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>
-                                                <Stack direction={'row'} spacing={1}>
-                                                    <PreviewIcon sx={{ color: '#00A7B5', cursor: 'pointer' }}
+                                                {new Date(doctor?.availability[0]?.availableDate).toLocaleDateString("en-GB")}
+                                            </TableCell>
+                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{doctor.status ? "Active" : "Inactive"}</TableCell>
+                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>
+                                                <Stack direction={'row'} spacing={0.6}>
+                                                    <PreviewIcon sx={{ color: '#00A7B5', cursor: 'pointer', pointerEvents: doctor.status ? "auto" : "none", }}
                                                         onClick={() => {
                                                             setOpenViewDoctor(true);
                                                             setSelectedDoctor(doctor);
                                                         }}
                                                     />
-                                                    <EditOutlinedIcon sx={{ color: '#00A7B5', cursor: 'pointer' }}
+                                                    <EditOutlinedIcon sx={{ color: '#00A7B5', cursor: 'pointer', pointerEvents: doctor.status ? "auto" : "none", }}
                                                         onClick={() => {
                                                             setOpenEditDoctor(true);
                                                             setSelectedDoctor(doctor);
                                                         }}
                                                     />
-                                                    <DeleteIcon sx={{ color: '#00A7B5', cursor: 'pointer' }}
+                                                    <DeleteIcon sx={{ color: '#00A7B5', cursor: 'pointer', pointerEvents: doctor.status ? "auto" : "none", }}
                                                         onClick={() => {
                                                             setOpenDeleteDoctor(true);
                                                             setSelectedDoctor(doctor);
                                                         }}
                                                     />
+                                                    {
+                                                        doctor?.status ?
+
+                                                        <PersonIcon
+                                                            sx={{ color: '#00A7B5', cursor: 'pointer' }}
+                                                            onClick={() => {
+                                                                setOpenStatusModal(true);
+                                                                setSelectedDoctor(doctor);
+                                                            }}
+                                                        />
+                                                        :
+                                                        <PersonOffIcon
+                                                            sx={{ color: '#00A7B5', cursor: 'pointer' }}
+                                                            onClick={() => {
+                                                                setOpenStatusModal(true);
+                                                                setSelectedDoctor(doctor);
+                                                            }}
+                                                        />
+                                                    }
+
                                                 </Stack>
                                             </TableCell>
                                         </TableRow>
@@ -137,6 +198,7 @@ const AdminDoctor = () => {
                 <AddDoctorModal
                     open={openAddDoctor}
                     handleClose={() => setOpenAddDoctor(false)}
+                    refetch={refetch}
                 />
                 <EditDoctorModal
                     open={openEditDoctor}
@@ -156,6 +218,23 @@ const AdminDoctor = () => {
                     setOpenViewDoctor={setOpenViewDoctor}
                     selectedDoctor={selectedDoctor}
                 />
+                <ChangeDoctorStatusModal
+                    open={openStatusModal}
+                    onClose={() => setOpenStatusModal(false)}
+                    selectedDoctor={selectedDoctor}
+                    refetch={refetch}
+                />
+                <FilterModal
+                    open={openFilter}
+                    onClose={() => setOpenFilter(false)}
+                    setOpenFilter={setOpenFilter}
+                    setFilter={setFilter}
+                    setPage={setPage}
+                    filter={filter}
+                    columnOptions={columnOptions}
+                    filterField={filterField}
+                    filter={filter}
+                />
                 <TablePagination
                     component="div"
                     count={doctorData?.getDoctors?.length}
@@ -163,8 +242,8 @@ const AdminDoctor = () => {
                     onPageChange={handleChangePage}
                     rowsPerPage={rowsPerPage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
-                    rowsPerPageOptions={[5,10,15,20,25]}
-                    sx={{backgroundColor:'#00A7B5', color:'white'}}
+                    rowsPerPageOptions={[5, 10, 15, 20, 25]}
+                    sx={{ backgroundColor: '#00A7B5', color: 'white' }}
                 />
             </Box>
         </>

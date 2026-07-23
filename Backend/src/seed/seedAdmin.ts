@@ -9,6 +9,7 @@ import bcrypt from 'bcrypt'
  * if it does not already exist.
 */
 export const seedAdmin=async()=>{
+
     const roleRepo=AppDataSource.getRepository(Role);
     const adminRole=await roleRepo.findOne({where:{roleName:'Admin'}});
 
@@ -16,9 +17,13 @@ export const seedAdmin=async()=>{
         throw new Error("Admin role not found");
     }
 
-    // Retrieve user repository
+    // gets user repository
     const userRepo=AppDataSource.getRepository(User);
-    const admin=await userRepo.findOne({where:{email:"babita@gmail.com"}})
+    const admin=await userRepo.findOne({
+        where:{
+            email:"babita@gmail.com"
+        }
+    })
 
     // Hash admin password before storing in database
     const hashedPassword=await bcrypt.hash("Babita@12345", 10);

@@ -2,10 +2,9 @@ import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn
 import { User } from "./user.ts";
 
 /**
- * Patient entity.
- * Stores patient-specific information
- * linked with a user account.
-*/
+ *  @module Patient/Entity.
+ * stores patient's infomartion
+ */
 
 @Entity()
 export class Patient {

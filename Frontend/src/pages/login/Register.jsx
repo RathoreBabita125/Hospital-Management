@@ -67,7 +67,7 @@ const Register = () => {
         event.preventDefault();
         try {
             const inputField = ["userName", "email", "password", "confirmPassword", "phone"];
-            const isValid = checkValidInput(inputField, setError, user);
+            const isValid = checkValidInput(inputField, setError, user, validateFormFields);
 
             // Stop API request if validation fails
             if (!isValid) {

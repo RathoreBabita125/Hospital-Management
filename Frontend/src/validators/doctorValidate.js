@@ -5,8 +5,8 @@ import {
     phoneInputCheck,
 } from "../constants/const";
 
-export const validateDoctorFields = (name, value) => {
-    
+export const validateDoctorFields = (name, value, doctor) => {
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -60,7 +60,7 @@ export const validateDoctorFields = (name, value) => {
                 return "Consultation fee must be greater than 0.";
             return "";
 
-        case "availableDays":
+        case "availableDate":
             if (!value) {
                 return "Available date is required.";
             }
@@ -69,7 +69,17 @@ export const validateDoctorFields = (name, value) => {
                 return "Past date cannot be selected.";
             }
             return "";
-            
+
+        case "fromTime":
+            if (!value) return "Start time is required.";
+            return "";
+
+        case "toTime":
+            if (!value) return "End time is required.";
+            if (doctor?.fromTime && value <= doctor.fromTime)
+                return "End time must be after start time.";
+            return "";
+
         default:
             return "";
     }

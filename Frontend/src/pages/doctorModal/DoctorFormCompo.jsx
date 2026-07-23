@@ -1,8 +1,8 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Stack, TextField } from "@mui/material";
 import { allDepartments, specializations } from "../../constants/const";
 
-const DoctorFormCompo = ({title, actionName, open, handleClose, doctor, error, setDoctor, handleChange, handleOnBlur, handleActionDoctor }) => {
-    
+const DoctorFormCompo = ({ title, actionName, open, handleClose, doctor, error, setDoctor, handleChange, handleOnBlur, handleActionDoctor }) => {
+
     return (
         <>
             <Dialog
@@ -126,18 +126,91 @@ const DoctorFormCompo = ({title, actionName, open, handleClose, doctor, error, s
                                 helperText={error.consultationFee ? error.consultationFee : ""}
                                 onBlur={handleOnBlur}
                             />
+                            {/* <TextField
+                                fullWidth
+                                type="date"
+                                name="availableDate"
+                                label="Available Date"
+                                value={doctor.availableDate}
+                                onChange={handleChange}
+                                error={error.availableDate}
+                                helperText={error.availableDate ? error.availableDate : ""}
+                                onBlur={handleOnBlur}
+                                slotProps={{
+                                    inputLabel: {
+                                        shrink: true,
+                                    },
+                                }}
+                            /> */}
+                            {/* <TextField
+                                select
+                                fullWidth
+                                label="Status"
+                                name="status"
+                                value={doctor.status}
+                                onChange={(e) =>
+                                    setDoctor({
+                                        ...doctor,
+                                        status: e.target.value === "true",
+                                    })
+                                }
+                            >
+                                <MenuItem value="true">Active</MenuItem>
+                                <MenuItem value="false">Inactive</MenuItem>
+                            </TextField> */}
+
                             <TextField
                                 fullWidth
                                 type="date"
-                                name="availableDays"
+                                name="availableDate"
                                 label="Available Date"
-                                value={doctor.availableDays}
+                                value={doctor.availableDate}
                                 onChange={handleChange}
-                                error={error.availableDays}
-                                helperText={error.availableDays ? error.availableDays : ""}
+                                error={error.availableDate}
+                                helperText={error.availableDate ? error.availableDate : ""}
                                 onBlur={handleOnBlur}
-                                InputLabelProps={{ shrink: true }}
+                                slotProps={{
+                                    inputLabel: {
+                                        shrink: true,
+                                    },
+                                }}
                             />
+
+                            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                                <TextField
+                                    fullWidth
+                                    type="time"
+                                    name="fromTime"
+                                    label="Time Slot From"
+                                    value={doctor.fromTime}
+                                    onChange={handleChange}
+                                    error={error.fromTime}
+                                    helperText={error.fromTime ? error.fromTime : ""}
+                                    onBlur={handleOnBlur}
+                                    slotProps={{
+                                        inputLabel: {
+                                            shrink: true,
+                                        },
+                                    }}
+                                />
+                                <TextField
+                                    fullWidth
+                                    type="time"
+                                    name="toTime"
+                                    label="Time Slot To"
+                                    value={doctor.toTime}
+                                    onChange={handleChange}
+                                    error={error.toTime}
+                                    helperText={error.toTime ? error.toTime : ""}
+                                    onBlur={handleOnBlur}
+                                    slotProps={{
+                                        inputLabel: {
+                                            shrink: true,
+                                        },
+                                    }}
+                                />
+                            </Stack>
+
                             <TextField
                                 select
                                 fullWidth

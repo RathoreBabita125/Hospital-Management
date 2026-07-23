@@ -1,9 +1,8 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Stack, Box, Button } from "@mui/material";
 
 const ViewDoctorModal = ({open, handleClose, selectedDoctor, setOpenViewDoctor}) => {
-    if (!selectedDoctor) return null;
 
-    console.log("Selected Doctor: ", selectedDoctor);
+    if (!selectedDoctor) return null;    
     
     return (
         <Dialog
@@ -23,7 +22,7 @@ const ViewDoctorModal = ({open, handleClose, selectedDoctor, setOpenViewDoctor})
                         <Typography><strong>Doctor Name :</strong> {selectedDoctor?.user?.userName}</Typography>
                         <Typography><strong>Department :</strong> {selectedDoctor?.department}</Typography>
                         <Typography><strong>Specialization :</strong> {selectedDoctor?.specialization}</Typography>
-                        <Typography><strong>Available Date :</strong> {selectedDoctor?.availableDays}</Typography>
+                        <Typography><strong>Available Date :</strong> {selectedDoctor?.availableDate}</Typography>
                         <Typography><strong>Consultation Fee :</strong> {selectedDoctor?.consultationFee}</Typography>
                         <Typography><strong>Status :</strong> {selectedDoctor?.status && "Active"}</Typography>
                         <Typography><strong>Email :</strong> {selectedDoctor?.user?.email}</Typography>

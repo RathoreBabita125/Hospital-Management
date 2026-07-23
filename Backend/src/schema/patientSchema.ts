@@ -1,10 +1,12 @@
 import { gql } from 'graphql-tag';
 
 /**
+ * @module Patient/Schema
  * Patient GraphQL schema.
  * Defines patient-related types and mutations
  * for managing patient profile information.
 */
+
 export const patientSchema = gql`
     type Patient{
         id:ID
@@ -21,6 +23,10 @@ export const patientSchema = gql`
     type PatientResponse{
         message:String
         patient:Patient
+    }
+
+    type Query {
+        getPatientProfile: Patient
     }
 
     type Mutation{
@@ -42,6 +48,6 @@ export const patientSchema = gql`
             dateOfBirth: Date!
             emergencyNumber: String!
             user:ID
-        ): PatientResponse
+        ): PatientResponse,
     }
 `;

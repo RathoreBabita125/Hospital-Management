@@ -14,18 +14,15 @@ import AdminReport from "./pages/admin/AdminReport";
 import DoctorPatient from "./pages/doctor/DoctorPatient";
 import DoctorAppointment from "./pages/doctor/DoctorAppointment";
 import DoctorPrescription from "./pages/doctor/DoctorPrescription";
-import DoctorMedicalRecord from "./pages/doctor/DoctorMedicalRecord";
-import DoctorPatientHistory from "./pages/doctor/DoctorPatientHistory";
 import BookAppointment from "./pages/patient/BookAppointment";
 import MyAppointment from "./pages/patient/MyAppointment";
 import PatientPrescription from "./pages/patient/PatientPrescription";
-import PatientMedicalRecord from "./pages/patient/PatientMedicalRecord";
-import PatientReport from "./pages/patient/PatientReport";
-import PatientChangePassword from "./pages/patient/ChangePassword";
 import { ToastContainer } from "react-toastify";
 import PublicRoute from "./routes/PublicRoute";
-import CompletePatientProfile from "./pages/login/CompleteProfile";
 import Profile from "./pages/login/Profile";
+import MyAvailability from "./pages/doctor/MyAvailability";
+import CompletePatientProfile from "./pages/login/CompleteProfile";
+import DoctorList from "./pages/patient/DoctorList";
 
 const router = createBrowserRouter([
   // Public Routes
@@ -42,14 +39,6 @@ const router = createBrowserRouter([
     element: (
       <PublicRoute>
         <Login />,
-      </PublicRoute>
-    )
-  },
-  {
-    path: "/complete-profile",
-    element: (
-      <PublicRoute>
-        <CompletePatientProfile />,
       </PublicRoute>
     )
   },
@@ -71,16 +60,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/unauthorize",
-    element: (
-      <PublicRoute>
-        <UnAuthorized />,
-      </PublicRoute>
-    )
+    element: <UnAuthorized />,
   },
-
+  
   // Protected Routes
   {
-    path: "/dashboard",
     element: (
       <ProtectedRoute allowedRoles={["Admin", "Doctor", "Patient"]}>
         <Layout />
@@ -89,26 +73,42 @@ const router = createBrowserRouter([
 
     children: [
       {
-        path: '',
+        path: "/dashboard",
         element: <RoleBasedDash />,
       },
 
       //admin
       {
         path: "admin-doctors",
-        element: <AdminDoctor />,
+        element: (
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <AdminDoctor />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-patients",
-        element: <AdminPatient />,
+       element: (
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <AdminPatient />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-appointments",
-        element: <AdminAppointment />,
+       element: (
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <AdminAppointment />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "admin-reports",
-        element: <AdminReport />,
+        element: (
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <AdminReport />
+          </ProtectedRoute>
+        ),
       },
 
       //doctor
@@ -137,23 +137,22 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "doctor-medical-records",
+        path: "my-availability",
         element: (
           <ProtectedRoute allowedRoles={["Doctor"]}>
-            <DoctorMedicalRecord />
+            <MyAvailability />
           </ProtectedRoute>
         ),
       },
-      {
-        path: "doctor-patient-history",
-        element: (
-          <ProtectedRoute allowedRoles={["Doctor"]}>
-            <DoctorPatientHistory />
-          </ProtectedRoute>
-        ),
-      },
-      
       //patient
+      {
+        path: "doctors-list",
+        element: (
+          <ProtectedRoute allowedRoles={["Patient"]}>
+            <DoctorList />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "patient-book-appointment",
         element: (
@@ -179,47 +178,25 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "patient-medical-records",
+        path: "complete-profile",
         element: (
           <ProtectedRoute allowedRoles={["Patient"]}>
-            <PatientMedicalRecord />
+            <CompletePatientProfile />
           </ProtectedRoute>
         ),
       },
-      {
-        path: "patient-prescriptions",
-        element: (
-          <ProtectedRoute allowedRoles={["Patient"]}>
-            <PatientPrescription />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "patient-report",
-        element: (
-          <ProtectedRoute allowedRoles={["Patient"]}>
-            <PatientReport />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "patient-change-password",
-        element: (
-          <ProtectedRoute allowedRoles={["Patient"]}>
-            <PatientChangePassword />
-          </ProtectedRoute>
-        ),
-      },
+
       {
         path: "profile",
         element: (
-          <ProtectedRoute allowedRoles={["Admin","Doctor","Patient"]}>
-            <Profile/>
+          <ProtectedRoute allowedRoles={["Admin", "Doctor", "Patient"]}>
+            <Profile />
           </ProtectedRoute>
         ),
       },
     ],
   },
+
 ]);
 
 export default function App() {

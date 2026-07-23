@@ -11,11 +11,6 @@ const PublicRoute = ({ children }) => {
   if (userAuth?.role?.roleName) {
     return <Navigate to="/dashboard" replace />;
   }
-
-  if (userAuth?.role?.roleName === "Patient" && !userAuth?.patient) {
-    return <Navigate to="/complete-profile" replace />;
-  }
-
   return children;
 };
 

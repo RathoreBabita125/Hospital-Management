@@ -10,11 +10,11 @@ import { PaginationContextProvider } from './context/PaginationContext.jsx'
 createRoot(document.getElementById('root')).render(
   <ApolloProvider client={client}>
     <PaginationContextProvider>
-    <AuthContextProvider>
-      <StrictMode>
-        <App />
-      </StrictMode>,
-    </AuthContextProvider>
+      <AuthContextProvider>
+        <StrictMode>
+          <App />
+        </StrictMode>,
+      </AuthContextProvider>
     </PaginationContextProvider>
   </ApolloProvider>
 )

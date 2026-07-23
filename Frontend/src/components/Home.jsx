@@ -28,13 +28,9 @@ const Home = () => {
                     </Box>
 
                     <Box>
-                        <Link to="/login">
-                            <Button sx={{color:'white'}}>Sign In</Button>
-                        </Link>
-
                         <Link to="/register">
                             <Button variant="contained" sx={{ ml: 2 , color:'#00A7B5', backgroundColor:'white'}}>
-                                Get Started
+                                Register
                             </Button>
                         </Link>
                     </Box>
@@ -56,7 +52,7 @@ const Home = () => {
                 <Box flex={1}>
                     <Typography
                         variant="h2"
-                        sx={{ mt: 3, color:"#00A7B5", fontWeight:700 }}
+                        sx={{ mt: 10, color:"#00A7B5", fontWeight:700 }}
                     >
                         Smart Hospital
                         <br />
@@ -73,14 +69,16 @@ const Home = () => {
                         from one secure platform.
                     </Typography>
 
-                    <Button
-                        variant="contained"
-                        size="large"
-                        endIcon={<ArrowForwardIcon />}
-                        sx={{mt:3, backgroundColor:'#00A7B5'}}
-                    >
-                        Explore System
-                    </Button>
+                    <Link to='/login'>
+                        <Button
+                            variant="contained"
+                            size="large"
+                            endIcon={<ArrowForwardIcon />}
+                            sx={{mt:3, backgroundColor:'#00A7B5'}}
+                        >
+                            Sign in to explore System
+                        </Button>
+                    </Link>
                 </Box>
 
                 <Box

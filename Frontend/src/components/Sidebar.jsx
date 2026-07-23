@@ -8,22 +8,17 @@ import AssessmentIcon from "@mui/icons-material/Assessment";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import HistoryIcon from "@mui/icons-material/History";
-import PersonIcon from "@mui/icons-material/Person";
 import MedicalInformationIcon from "@mui/icons-material/MedicalInformation";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import LoadingCompo from "../common/Loading";
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import { showActiveStyle } from "../constants/const";
 
-const Sidebar = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
+const Sidebar = ({ mobileOpen, setMobileOpen, drawerWidth }) => {
 
     const { userAuth, loading } = useContext(AuthContext);
-
-    if (loading) {
-        return <LoadingCompo />
-    }
-
-    console.log("The users detail: ", userAuth);
+    if (loading) return <LoadingCompo />
 
     const drawer = (
         <>
@@ -33,272 +28,259 @@ const Sidebar = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
                 </Toolbar>
                 <Divider />
                 <List sx={{ mt: 5 }}>
-                    <Link to='/dashboard'
-                        style={{
-                            textDecoration: "none",
-                            color: "inherit",
-                        }}
+                    <NavLink
+                        to="/dashboard"
+                        style={{ textDecoration: "none", color: "inherit" }}
                     >
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <DashboardIcon sx={{ color: '#00A7B5' }} />
-                            </ListItemIcon>
-                            <ListItemText primary="Dashboard" />
-                        </ListItemButton>
-                    </Link>
+                        {({ isActive }) => (
+                            <ListItemButton
+                                selected={isActive}
+                                sx={showActiveStyle}
+                            >
+                                <ListItemIcon>
+                                    <DashboardIcon sx={{ color: !isActive ? '#00A7B5' : "white" }} />
+                                </ListItemIcon>
+                                <ListItemText primary="Dashboard" />
+                            </ListItemButton>
+                        )}
+                    </NavLink>
+
                     {userAuth?.role?.roleName == 'Admin' && (
                         <>
-                            <Link to='/dashboard/admin-doctors'
-                                style={{
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                }}
+                            <NavLink
+                                to='/admin-doctors'
+                                style={{ textDecoration: "none", color: "inherit", }}
                             >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <MedicalServicesIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Doctor Management" />
-                                </ListItemButton>
-                            </Link>
+                                {({ isActive }) => (
+                                    <ListItemButton
+                                        selected={isActive}
+                                        sx={showActiveStyle}
+                                    >
+                                        <ListItemIcon>
+                                            <MedicalServicesIcon sx={{ color: !isActive ? '#00A7B5' : "white" }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Doctor Management" />
+                                    </ListItemButton>
+                                )}
+                            </NavLink>
 
-                            <Link to='/dashboard/admin-patients'
+                            <NavLink to='/admin-patients'
                                 style={{
                                     textDecoration: "none",
                                     color: "inherit",
                                 }}
                             >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <PersonalInjuryIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Patient Management" />
-                                </ListItemButton>
-                            </Link>
+                                {({ isActive }) => (
+                                    <ListItemButton
+                                        selected={isActive}
+                                        sx={showActiveStyle}
+                                    >
+                                        <ListItemIcon>
+                                            <PersonalInjuryIcon sx={{ color: !isActive ? '#00A7B5' : "white" }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Patient Management" />
+                                    </ListItemButton>
+                                )}
+                            </NavLink>
 
-                            <Link to='/dashboard/admin-appointments'
+                            <NavLink to='/admin-appointments'
                                 style={{
                                     textDecoration: "none",
                                     color: "inherit",
                                 }}
                             >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <EventAvailableIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Appointment Management" />
-                                </ListItemButton>
-                            </Link>
+                                {({ isActive }) => (
+                                    <ListItemButton
+                                        selected={isActive}
+                                        sx={showActiveStyle}
+                                    >
+                                        <ListItemIcon>
+                                            <EventAvailableIcon sx={{ color: !isActive ? '#00A7B5' : "white" }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Appointment Management" />
+                                    </ListItemButton>
+                                )}
+                            </NavLink>
 
-                            <Link to='/dashboard/admin-reports'
+                            <NavLink to='/admin-reports'
                                 style={{
                                     textDecoration: "none",
                                     color: "inherit",
                                 }}
                             >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <AssessmentIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Reports" />
-                                </ListItemButton>
-                            </Link>
+                                {({ isActive }) => (
+                                    <ListItemButton
+                                        selected={isActive}
+                                        sx={showActiveStyle}
+                                    >
+                                        <ListItemIcon>
+                                            <AssessmentIcon sx={{ color: !isActive ? '#00A7B5' : "white" }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Reports" />
+                                    </ListItemButton>
+                                )}
+                            </NavLink>
                         </>
                     )}
                     {userAuth?.role?.roleName == 'Doctor' && (
                         <>
-                            <Link
+                            <NavLink
                                 style={{
                                     textDecoration: "none",
                                     color: "inherit",
                                 }}
                                 to='doctor-appointment'
                             >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <EventAvailableIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="My Appointments" />
-                                </ListItemButton>
-                            </Link>
+                                {({ isActive }) => (
+                                    <ListItemButton
+                                        selected={isActive}
+                                        sx={showActiveStyle}
+                                    >
+                                        <ListItemIcon>
+                                            <EventAvailableIcon sx={{ color: !isActive ? '#00A7B5' : "white" }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary="My Appointments" />
+                                    </ListItemButton>
+                                )}
+                            </NavLink>
 
-                            <Link
+                            <NavLink
                                 style={{
                                     textDecoration: "none",
                                     color: "inherit",
                                 }}
                                 to='doctor-patient'
                             >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <PersonalInjuryIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="My Patients" />
-                                </ListItemButton>
-                            </Link>
+                                {({ isActive }) => (
+                                    <ListItemButton
+                                        selected={isActive}
+                                        sx={showActiveStyle}
+                                    >
+                                        <ListItemIcon>
+                                            <PersonalInjuryIcon sx={{ color: !isActive ? '#00A7B5' : "white" }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary="My Patients" />
+                                    </ListItemButton>
+                                )}
+                            </NavLink>
 
-                            <Link
+                            <NavLink
+                                style={{
+                                    textDecoration: "none",
+                                    color: "inherit",
+                                }}
+                                to='my-availability'
+                            >
+                                {({ isActive }) => (
+                                    <ListItemButton
+                                        selected={isActive}
+                                        sx={showActiveStyle}
+                                    >
+                                        <ListItemIcon>
+                                            <EventAvailableIcon sx={{ color: !isActive ? '#00A7B5' : "white" }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary="My Availability" />
+                                    </ListItemButton>
+                                )}
+                            </NavLink>
+                            <NavLink
                                 style={{
                                     textDecoration: "none",
                                     color: "inherit",
                                 }}
                                 to='doctor-prescription'
                             >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <ReceiptLongIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Prescriptions" />
-                                </ListItemButton>
-                            </Link>
-
-                            {/* <Link
-                                style={{
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                }}
-                                to='doctor-medical-records'
-                            >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <MedicalInformationIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Medical Records" />
-                                </ListItemButton>
-                            </Link> */}
-
-                            {/* <Link
-                                style={{
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                }}
-                                to='doctor-patient-history'
-                            >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <ReceiptLongIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Patient History" />
-                                </ListItemButton>
-                            </Link> */}
+                                {({ isActive }) => (
+                                    <ListItemButton
+                                        selected={isActive}
+                                        sx={showActiveStyle}
+                                    >
+                                        <ListItemIcon>
+                                            <ReceiptLongIcon sx={{ color: !isActive ? '#00A7B5' : "white" }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Prescriptions" />
+                                    </ListItemButton>
+                                )}
+                            </NavLink>
                         </>
                     )}
                     {userAuth?.role?.roleName == 'Patient' && (
                         <>
-                            <Link to='patient-book-appointment'
+                            <NavLink to='doctors-list'
                                 style={{
                                     textDecoration: "none",
                                     color: "inherit",
                                 }}
                             >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <CalendarMonthIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Book Appointment" />
-                                </ListItemButton>
-                            </Link>
-
-                            <Link to='patient-my-appointment'
+                                {({ isActive }) => (
+                                    <ListItemButton
+                                        selected={isActive}
+                                        sx={showActiveStyle}
+                                    >
+                                        <ListItemIcon>
+                                            <MedicalServicesIcon sx={{ color: !isActive ? '#00A7B5' : "white" }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Doctors List" />
+                                    </ListItemButton>
+                                )}
+                            </NavLink>
+                            <NavLink to='patient-book-appointment'
                                 style={{
                                     textDecoration: "none",
                                     color: "inherit",
                                 }}
                             >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <HistoryIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="My Appointments" />
-                                </ListItemButton>
-                            </Link>
-
-                            <Link to='patient-medical-records'
+                                {({ isActive }) => (
+                                    <ListItemButton
+                                        selected={isActive}
+                                        sx={showActiveStyle}
+                                    >
+                                        <ListItemIcon>
+                                            <CalendarMonthIcon sx={{ color: !isActive ? '#00A7B5' : "white" }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Book Appointment" />
+                                    </ListItemButton>
+                                )}
+                            </NavLink>
+                            <NavLink to='patient-my-appointment'
                                 style={{
                                     textDecoration: "none",
                                     color: "inherit",
                                 }}
                             >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <MedicalInformationIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Medical Records" />
-                                </ListItemButton>
-                            </Link>
-
-                            <Link to='patient-prescription'
+                                {({ isActive }) => (
+                                    <ListItemButton
+                                        selected={isActive}
+                                        sx={showActiveStyle}
+                                    >
+                                        <ListItemIcon>
+                                            <HistoryIcon sx={{ color: !isActive ? '#00A7B5' : "white" }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary="My Appointments" />
+                                    </ListItemButton>
+                                )}
+                            </NavLink>
+                            <NavLink to='patient-prescription'
                                 style={{
                                     textDecoration: "none",
                                     color: "inherit",
                                 }}
                             >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <MedicalInformationIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Prescription" />
-                                </ListItemButton>
-                            </Link>
-
-                            <Link to='patient-report'
-                                style={{
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                }}
-                            >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <AssessmentIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Reports" />
-                                </ListItemButton>
-                            </Link>
-
-                            <Link to='patient-change-password'
-                                style={{
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                }}
-                            >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <ReceiptLongIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Change Password" />
-                                </ListItemButton>
-                            </Link>
-
-                            <Link to='patient-profile'
-                                style={{
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                }}
-                            >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <PersonIcon sx={{ color: '#00A7B5' }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Profile" />
-                                </ListItemButton>
-                            </Link>
+                                {({ isActive }) => (
+                                    <ListItemButton
+                                        selected={isActive}
+                                        sx={showActiveStyle}
+                                    >
+                                        <ListItemIcon>
+                                            <MedicalInformationIcon sx={{ color: !isActive ? '#00A7B5' : "white" }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Prescription" />
+                                    </ListItemButton>
+                                )}
+                            </NavLink>
                         </>
                     )}
 
-                    <Link
-                        to='profile'
-                        style={{
-                            textDecoration: "none",
-                            color: "inherit",
-                        }}
-                    >
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <PersonIcon sx={{ color: '#00A7B5' }} />
-                            </ListItemIcon>
-                            <ListItemText primary="Profile" />
-                        </ListItemButton>
-                    </Link>
                 </List>
             </Box>
         </>

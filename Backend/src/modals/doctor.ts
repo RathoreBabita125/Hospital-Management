@@ -1,41 +1,50 @@
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Appointment } from "./appointment.ts";
 import { User } from "./user.ts";
+import { DoctorAvailability } from "./doctorAvailability.ts";
 
 /**
- * Doctor entity.
+ *  @module Doctor/Entity.
  * Stores professional details of doctors
- * and links each doctor to a user account.
  */
+
 @Entity()
-export class Doctor{
+export class Doctor {
     // Unique identifier for the doctor
     @PrimaryGeneratedColumn()
-    id!:number;
+    id!: number;
 
-    @Column({type:'text'})
-    department!:string
+    @Column({ type: 'text' })
+    department!: string
 
-    @Column({type:'text'})
-    specialization!:string
+    @Column({ type: 'text' })
+    specialization!: string
 
-    @Column({type:'int'})
-    experience!:number
+    @Column({ type: 'int' })
+    experience!: number
 
-    @Column({type:'date'})
-    availableDays!:Date
+    @Column({ type: 'int' })
+    consultationFee!: number
 
-    @Column({type:'int'})
-    consultationFee!:number
+    @Column({ type: 'boolean' })
+    status!: boolean
 
-    @Column({type:'boolean'})
-    status!:boolean
+    @CreateDateColumn({type:'date'})
+    createdAt!:Date
 
-    @OneToMany(()=>Appointment, (appointment)=>appointment.doctor)
-    appointment!:Appointment[]
+    @UpdateDateColumn({type:'date'})
+    updatedAt!:Date
 
-    @OneToOne(()=>User)
+    @OneToMany(() => Appointment, (appointment) => appointment.doctor)
+    appointment!: Appointment[]
+
+    @OneToOne(() => User)
     @JoinColumn({ name: "userId" })
-    user!:User
+    user!: User
+
+    @OneToMany(() => DoctorAvailability, (availability) => availability.doctor, {
+        cascade:true
+    })
+    availability!: DoctorAvailability[]
 }
 

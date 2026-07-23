@@ -2,10 +2,10 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.ts";
 
 /**
- * Role entity.
- * Defines user roles and maintains the relationship
- * with associated users.
+ * @module Role/Entity
+ * Defines user roles
  */
+
 @Entity()
 export class Role{
     // Unique identifier for the role

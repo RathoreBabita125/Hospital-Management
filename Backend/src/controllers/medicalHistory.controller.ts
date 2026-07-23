@@ -1,5 +1,5 @@
 /**
- * Medical History resolver.
+ * @module Medical/Resolver
  * Handles operations related to maintaining patient's medical records,
  * including adding diagnosis, symptoms, allergies, treatment details,
  * and follow-up information.
@@ -12,6 +12,8 @@ import { validateMedicalHistory } from "../validators/medicalHistoryValidator.ts
 
 export const medicalResolver = {
     Query: {
+
+        // fetches all medical history
         getMedicalHistory:async()=>{
             const medicalHistoryRepo = AppDataSource.getRepository(MedicalHistory);
             const allMedicalsHistory=medicalHistoryRepo.find();
@@ -20,6 +22,8 @@ export const medicalResolver = {
     },
 
     Mutation: {
+
+        // add medical details
         addMedicalHistory: async (_: any, medicalHistoryData: MedicalHistoryDetails) => {
             const medicalHistoryRepo = AppDataSource.getRepository(MedicalHistory);
 
@@ -64,6 +68,7 @@ export const medicalResolver = {
             }
         },
 
+        // updates existing medical details
         updateMedicalHistory: async (_: any, medicalHistoryData: MedicalHistoryDetails) => {
             const medicalHistoryRepo = AppDataSource.getRepository(MedicalHistory);
             const appointmentRepo = AppDataSource.getRepository(Appointment);
@@ -71,6 +76,7 @@ export const medicalResolver = {
             const inputField = ["diagnosis", "symptoms","allergies","treatmentNotes","recommendedTests"];
             const isValid = validateMedicalHistory(medicalHistoryData, inputField);
 
+            // checks validation
             if (!isValid) {
                 throw new Error("Please enter valid details");
             }
@@ -106,8 +112,10 @@ export const medicalResolver = {
             medicalHistory.followUpDate = medicalHistoryData.followUpDate;
             medicalHistory.appointment=appointment;
 
+            // saves medical details into database.
             await medicalHistoryRepo.save(medicalHistory);
 
+            // returns response
             return {
                 message: "Medical history updated successfully.",
                 medicalHistory

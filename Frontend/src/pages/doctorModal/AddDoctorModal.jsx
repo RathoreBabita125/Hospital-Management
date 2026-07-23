@@ -9,9 +9,9 @@ import { inputValueHandler } from "../../validators/inputValueHandler";
 import DoctorFormCompo from "./DoctorFormCompo";
 import { doctorInputFields } from "../../constants/const";
 
-const AddDoctorModal = ({ handleClose, open }) => {
-    const [addDoctor] = useMutation(ADDDOCTOR, {
-        refetchQueries: [{ query: GETDOCTORS }],
+const AddDoctorModal = ({ handleClose, open, refetch}) => {
+    const [addDoctor] = useMutation(ADDDOCTOR,{
+        refetchQueries:[GETDOCTORS]
     });
     const [doctor, setDoctor] = useState({
         userName: "",
@@ -22,7 +22,9 @@ const AddDoctorModal = ({ handleClose, open }) => {
         specialization: "",
         experience: "",
         consultationFee: "",
-        availableDays: "",
+        availableDate: "",
+        fromTime: "",
+        toTime: "",
         status: true,
     });
     const [error, setError] = useState({
@@ -32,9 +34,12 @@ const AddDoctorModal = ({ handleClose, open }) => {
         phone: "",
         department: "",
         specialization: "",
-        experience: null,
+        experience: "",
         consultationFee: "",
-        availableDays: "",
+        availableDate: "",
+        fromTime: "",
+        toTime: "",
+        status: true,
     });
 
     // Handles input value updates and clears validation errors
@@ -64,12 +69,15 @@ const AddDoctorModal = ({ handleClose, open }) => {
                     department: doctor.department,
                     specialization: doctor.specialization,
                     experience: Number(doctor.experience),
-                    availableDays: doctor.availableDays,
+                    availableDate: doctor.availableDate,
+                    fromTime: doctor.fromTime,
+                    toTime: doctor.toTime,
                     consultationFee: Number(doctor.consultationFee),
                     status: doctor.status,
                 },
             });
             console.log(response);
+            await refetch();
             toast.success("You have added doctor successfully!!!");
             setDoctor({
                 userName: "",
@@ -79,7 +87,9 @@ const AddDoctorModal = ({ handleClose, open }) => {
                 department: "",
                 specialization: "",
                 experience: "",
-                availableDays: "",
+                availableDate: "",
+                fromTime: "",
+                toTime: "",
                 consultationFee: "",
                 status: true,
             });

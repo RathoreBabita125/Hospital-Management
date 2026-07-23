@@ -11,27 +11,26 @@ import { GETUSERS } from "../../query/login/userQuery";
 import LoadingCompo from "../../common/Loading";
 import { GETAPPOINTMENTS } from "../../query/patient/appointmentQuery";
 import { GETALLPRESCRIPTIONS } from "../../query/doctor/Prescription";
+import { GETDOCTORS } from "../../query/doctor/doctorQuery";
 
 const AdminDashboard = () => {
-    const { userAuth } = useContext(AuthContext);
-    console.log("inside patient", userAuth);
 
+    const { userAuth } = useContext(AuthContext);
     const { data: userData, loading: userLoading } = useQuery(GETUSERS);
     const { data: appointmentData, loading: appointmentLoading } = useQuery(GETAPPOINTMENTS);
+    const { data: doctorData, loading: doctorLoading } = useQuery(GETDOCTORS);
     const { data: prescriptionData, loading: prescriptionLoading } = useQuery(GETALLPRESCRIPTIONS);
 
-    if(userLoading || appointmentLoading || prescriptionLoading) return <LoadingCompo/>
+    if(userLoading || appointmentLoading || prescriptionLoading || doctorLoading) return <LoadingCompo/>
 
-    const totalDoctors=userData?.getUsers?.filter((user)=>{
-        return user?.role?.roleName==="Doctor";
-    })
+    const totalDoctors=doctorData?.getDoctors?.map((doctor)=>doctor).length;
+
     const totalPatients=userData?.getUsers?.filter((user)=>{
         return user?.role?.roleName==="Patient";
     })
+    
     const totalAppointments=appointmentData?.getAppointments?.length;
     const totalPrescription=prescriptionData?.getAllPrescriptions?.length;
-
-    console.log("The prescription data are : ", prescriptionData)
 
     return (
         <>
@@ -57,7 +56,7 @@ const AdminDashboard = () => {
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <CardComponent
                             title="Total Doctors"
-                            count={totalDoctors?.length}
+                            count={totalDoctors}
                             bgColor="#E3F2FD"
                             icon={
                                 <BadgeIcon

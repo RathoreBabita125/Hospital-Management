@@ -8,15 +8,14 @@ import {
     Typography,
 } from "@mui/material";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { COMPLETEPROFILE } from "../../query/patient/completeProfile";
 import { useMutation } from "@apollo/client/react";
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom'
-import { client } from "../../client/client";
+import { AuthContext } from "../../context/AuthContext";
 
 const CompletePatientProfile = () => {
-    const [completePatientProfile] = useMutation(COMPLETEPROFILE);
     const navigate = useNavigate();
     const [profile, setProfile] = useState({
         age: "",
@@ -26,6 +25,15 @@ const CompletePatientProfile = () => {
         address: "",
         emergencyNumber: ""
     })
+    const [completePatientProfile] = useMutation(COMPLETEPROFILE);
+    const { userAuth, refetchAuth } = useContext(AuthContext);
+
+    useEffect(() => {
+        if (userAuth?.patient) {
+            navigate("/dashboard", { replace: true });
+        }
+    }, [userAuth, navigate]);
+
     const handleInput = (event) => {
         event.preventDefault();
         const name = event.target.name;
@@ -36,10 +44,8 @@ const CompletePatientProfile = () => {
     const handleSaveProfile = async (event) => {
         event.preventDefault();
 
-        console.log("Profile data", profile);
-
         try {
-            const { data } = await completePatientProfile({
+            const response = await completePatientProfile({
                 variables: {
                     age: Number(profile.age),
                     gender: profile.gender,
@@ -49,8 +55,10 @@ const CompletePatientProfile = () => {
                     emergencyNumber: profile.emergencyNumber,
                 },
             });
-            console.log(data);
+            console.log(response);
             toast.success("You have completed your profile");
+            await refetchAuth();
+
             setProfile({
                 age: "",
                 gender: "",
@@ -58,16 +66,16 @@ const CompletePatientProfile = () => {
                 dateOfBirth: "",
                 address: "",
                 emergencyNumber: ""
-            })
-            await client.resetStore();
-            navigate('/dashboard')
-        } catch (error) {
-            const message = error?.message || "";
-            if (message.includes("Profile already completed")) {
+            });
+            navigate('/dashboard');
+        } catch (error) {      
+            if (error.message.includes("Profile already completed")) {
+                await refetchAuth();   
+                toast.success("Profile already completed.");          
                 navigate("/dashboard", { replace: true });
                 return;
             }
-            toast.error(message);
+            toast.error(error.message);
         }
     };
     return (
@@ -162,7 +170,11 @@ const CompletePatientProfile = () => {
                             value={profile.dateOfBirth}
                             onChange={handleInput}
                             label="Date of Birth"
-                            InputLabelProps={{ shrink: true }}
+                            slotProps={{
+                                inputLabel: {
+                                    shrink: true
+                                }
+                            }}
                         />
                         <TextField
                             fullWidth

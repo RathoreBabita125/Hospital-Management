@@ -2,11 +2,13 @@ import { dateField, emailField, nameField, passwordField, phoneField } from "../
 import { DoctorDetails } from "../data/datatypes.ts";
 
 /**
+ * @module Doctor/validator
  * Doctor data validation function.
  * Validates required doctor fields such as
  * department, specialization, experience,
  * and consultation fee.
  */
+
 export const validateDoctor=(doctorData:DoctorDetails, inputField:string[])=>{
 
      // Validate user name field
@@ -81,8 +83,8 @@ export const validateDoctor=(doctorData:DoctorDetails, inputField:string[])=>{
     }
 
     // Validate available date field
-    if(inputField.includes('availableDays')){
-        if(!doctorData.availableDays){
+    if(inputField.includes('availableDate')){
+        if(!doctorData.availableDate){
             throw new Error("Available Day is required.")
         }
     }

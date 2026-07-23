@@ -1,5 +1,5 @@
 /**
- * Document GraphQL resolvers.
+ * @module Document/Resolver 
  * Handles document retrieval, upload,
  * and deletion for patient appointments.
  */
@@ -13,10 +13,7 @@ export const documentResolvers = {
 
     Query: {
 
-        /**
-         * Retrieves all uploaded documents
-         * along with their associated appointments.
-        */
+        // Retrieves all uploaded documents
         getDocuments: async () => {
             const documentRepo = AppDataSource.getRepository(Document);
             const allDocuments = await documentRepo.find({
@@ -30,7 +27,7 @@ export const documentResolvers = {
 
     Mutation: {
         /**
-         * Uploads a document for a specific appointment.
+         * adds a document for a specific appointment.
          * Validates file type and prevents duplicate uploads.
         */
         uploadDocument: async (_: any, documentData: DocumentDetails) => {
@@ -47,22 +44,24 @@ export const documentResolvers = {
                 },
             });
 
-             // Check for duplicate document
+            //check for appointment exists or not
+            if (!appointment) {
+                throw new Error("Appointment not found.");
+            }
+
             const existingDocument = await documentRepo.findOne({
                 where: {
                     appointment: { id: documentData.appointment },
                     fileName: documentData.fileName,
                 },
             });
-
+            
+            // Check for duplicate document
             if (existingDocument) {
                 throw new Error("This document is already existed")
             }
-            if (!appointment) {
-                throw new Error("Appointment not found.");
-            }
 
-            // Create and save document record
+            // Creates and save document record
             const newDocument = documentRepo.create({
                 fileName: documentData.fileName,
                 fileType: documentData.fileType,
@@ -79,9 +78,7 @@ export const documentResolvers = {
             };
         },
 
-        /**
-         * Deletes an uploaded document by its identifier.
-        */
+        // Deletes the document by its identifier.
         deleteDocument: async (_: any, documentData: DocumentDetails) => {
             const documentRepo = AppDataSource.getRepository(Document);
             const document = await documentRepo.findOne({

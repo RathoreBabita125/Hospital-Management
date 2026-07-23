@@ -1,11 +1,13 @@
 import { gql } from 'graphql-tag'
 
 /**
+ * @module Document/Schema
  * Document GraphQL schema.
  * Defines document-related types, queries,
  * and mutations for managing uploaded files
  * associated with appointments.
  */
+
 export const documentSchema = gql`
 
     type Document {

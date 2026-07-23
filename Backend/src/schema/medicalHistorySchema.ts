@@ -1,5 +1,10 @@
 import {gql} from 'graphql-tag';
 
+/**
+ * @module MedicalHistory/Schema
+ * stores medical informations
+ */
+
 export const medicalHistorySchema=gql`
 
     type MedicalHistory{

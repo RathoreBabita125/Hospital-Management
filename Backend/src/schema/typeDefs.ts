@@ -6,6 +6,11 @@ import { appointmentSchema } from './appointmentSchema.ts'
 import { prescriptionSchema } from './prescriptionSchema.ts'
 import { documentSchema } from './documentSchema.ts'
 import { medicalHistorySchema } from './medicalHistorySchema.ts'
+import { doctorAvailabilitySchema } from './doctorAvailabilitySchema.ts'
+
+/**
+ * @module Schema/Root
+*/
 
 export const typeDefs=gql`
     scalar Date
@@ -16,5 +21,5 @@ export const typeDefs=gql`
     ${prescriptionSchema}
     ${documentSchema}
     ${medicalHistorySchema}
-
+    ${doctorAvailabilitySchema}
 `

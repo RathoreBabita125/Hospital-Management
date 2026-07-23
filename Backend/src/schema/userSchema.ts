@@ -1,6 +1,7 @@
 import { gql } from 'graphql-tag';
 
 /**
+ * @module User/Schema
  * User GraphQL schema.
  * Defines user-related types, authentication responses,
  * queries, and mutations for user management.

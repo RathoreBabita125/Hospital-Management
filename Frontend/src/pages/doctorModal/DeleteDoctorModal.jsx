@@ -1,11 +1,13 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Box, Button} from "@mui/material";
 import { toast } from "react-toastify";
 import { useMutation } from "@apollo/client/react";
-import { DELETEDOCTOR } from "../../query/doctor/doctorQuery";
+import { DELETEDOCTOR, GETDOCTORS } from "../../query/doctor/doctorQuery";
 
 const DeleteDoctorModal = ({open, handleClose, selectedDoctor, setOpenDeleteDoctor}) => {
     const [deleteDoctor] = useMutation(DELETEDOCTOR, {
-        refetchQueries:['getProjects']
+        refetchQueries:[{
+            query: GETDOCTORS
+        }]
     });
     const handleDeleteDoctor = async () => {
         try {
@@ -15,8 +17,8 @@ const DeleteDoctorModal = ({open, handleClose, selectedDoctor, setOpenDeleteDoct
                 }
             });
             if(response){
+                setOpenDeleteDoctor(false);
                 toast.success("Doctor has been deleted successfully.");
-                handleClose();
             }
         } catch (error) {
             toast.error(error.message);

@@ -2,10 +2,9 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Up
 import { Appointment } from "./appointment.ts";
 
 /**
- * Document entity.
- * Represents medical documents uploaded
- * and associated with patient appointments.
+ *  @module Document/Entity.
  */
+
 @Entity()
 export class Document{
     // Unique identifier for the document
@@ -30,6 +29,8 @@ export class Document{
     @UpdateDateColumn({type:'date'})
     updatedAt!:Date;
 
-    @ManyToOne(()=>Appointment, (appointment)=>appointment.document)
+    @ManyToOne(()=>Appointment, (appointment)=>appointment.document, {
+        onDelete:'CASCADE'
+    })
     appointment!:Appointment;
 }

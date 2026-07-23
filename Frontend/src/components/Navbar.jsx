@@ -20,15 +20,19 @@ import { LOGOUT } from "../query/login/userQuery";
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useApolloClient } from "@apollo/client/react";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
-const Navbar = ({ setMobileOpen }) => {
+const Navbar = ({ setMobileOpen, drawerWidth }) => {
 
-  let { userAuth, refetch } = useContext(AuthContext);
+  let { userAuth, refetchAuth } = useContext(AuthContext);
   const [logout] = useMutation(LOGOUT);
-  const drawerWidth = 300;
   const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
   const navigate = useNavigate();
+
+  console.log("user login details: ", userAuth);
+  
+
+  const open = Boolean(anchorEl);
   const client = useApolloClient();
 
   const handleOpen = (event) => {
@@ -42,8 +46,8 @@ const Navbar = ({ setMobileOpen }) => {
   const handleLogout = async () => {
     try {
       await logout();
-      await client.resetStore();
-      refetch()
+      await client.clearStore()
+      refetchAuth()
       navigate('/login', { replace: true });
       toast.success("You have logged out successfully!!!");
     }
@@ -107,13 +111,26 @@ const Navbar = ({ setMobileOpen }) => {
           </Box>
           <Divider />
 
-          <MenuItem onClick={()=>{
+          <MenuItem onClick={() => {
             navigate('/dashboard/profile')
           }}>
             <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
             Profile
           </MenuItem>
           <Divider />
+
+          {
+            userAuth?.role?.roleName === "Patient" &&
+            <>
+              <MenuItem onClick={() => {
+                navigate('/dashboard/complete-profile')
+              }}>
+                <ListItemIcon><InfoOutlinedIcon fontSize="small" /></ListItemIcon>
+                Complete Info
+              </MenuItem>
+              <Divider />
+            </>
+          }
 
           <MenuItem onClick={handleLogout}>
             <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>

@@ -1,6 +1,7 @@
 /**
  * Common validation patterns and application constants
- * used across the Hospital Management System.
+ * used across application.
+ * @module constants/validation
  */
 
 export const nameField = /^[A-Za-z ]*$/;
@@ -15,7 +16,7 @@ export const dateField=/^\d{4}-\d{2}-\d{2}$/;
 export const allowedFileTypes = [ "pdf", "jpeg", "png", "jpg"];
 
 //doctor form input fields
-export const doctorInputFields = ["userName", "email", "password", "phone", "department", "specialization", "experience", "consultationFee", "availableDays", "status"];
+export const doctorInputFields = ["userName", "email", "password", "phone", "department", "specialization", "experience", "consultationFee", "availableDate", "status"];
 
 
 

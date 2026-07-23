@@ -2,13 +2,14 @@ import { emailField, nameField, passwordField, phoneField } from "../constants/c
 import { UserDetails } from "../data/datatypes.ts";
 
 /**
+ * @module User/Validator
  * User data validation function.
  * Validates user fields such as userName, email,
  * password, confirm password, and phone number.
- * 
  * Validation is performed only for fields
  * provided in the inputField array.
  */
+
 export const validateUserData = (userData: UserDetails, inputField: string[]): Boolean => {
 
     const { userName, email, password, confirmPassword, newPassword, phone } = userData;

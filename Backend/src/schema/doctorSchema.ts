@@ -1,28 +1,24 @@
 /**
+ * @module Doctor/Schema
  * Doctor GraphQL schema.
  * Defines doctor-related types, queries,
  * and mutations for managing doctor profiles.
 */
+
 import {gql} from 'graphql-tag';
 
 export const doctorSchema=gql`
 
-    type User{
-        userName:String!
-        email:String!
-        password:String!
-        phone:String!
-    }
-
     type Doctor{
-        id:ID
-        department:String!
-        specialization:String!
-        experience:Int!
-        availableDays:Date!
-        consultationFee:Int!
-        status:Boolean!
-        user:User
+        id: ID!
+        department: String!
+        specialization: String!
+        experience: Int!
+        consultationFee: Int!
+        status: Boolean!
+        user: User
+        appointment: [Appointment]
+        availability:[DoctorAvailability]
     }
 
     type DoctorResponse{
@@ -35,38 +31,41 @@ export const doctorSchema=gql`
             userName: String
             department: String
             specialization: String
-            availableDate: Date
+            doctorName:String
+            patientName:String
+            status:String
         ):[Doctor]
     }
 
     type Mutation{
         addDoctor(
-            userName:String!
-            email:String!
-            password:String!
-            phone:String!
-            department:String!
-            specialization:String!
-            experience:Int!
-            availableDays:Date!
-            consultationFee:Int!
-            status:Boolean!
-            user:ID
+            userName: String!
+            email: String!
+            password: String!
+            phone: String!
+            department: String!
+            specialization: String!
+            experience: Int!
+            availableDate: String!
+            fromTime: String!
+            toTime: String!
+            consultationFee: Int!
+            status: Boolean
         ):DoctorResponse
 
         updateDoctor(
-            id:ID!
-            userName:String!
-            email:String!
-            password:String!
-            phone:String!
-            department:String!
-            specialization:String!
-            experience:Int!
-            availableDays:Date!
-            consultationFee:Int!
-            status:Boolean!
-            user:ID
+            id: ID!
+            userName: String
+            email: String
+            phone: String
+            department: String
+            specialization: String
+            experience: Int
+            availableDate: String
+            fromTime: String
+            toTime: String
+            consultationFee: Int
+            status: Boolean
         ):DoctorResponse
 
         deleteDoctor(
@@ -75,7 +74,9 @@ export const doctorSchema=gql`
 
         changeDoctorStatus(
             id:ID!
+            status: Boolean
         ):DoctorResponse
+
     }
 `
 

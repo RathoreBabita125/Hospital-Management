@@ -9,11 +9,11 @@ import { GETME, UPDATEPROFILE } from "../../query/login/userQuery";
 const EditProfileModal = ({ openEditModal, setOpenEditModal }) => {
 
     const { userAuth } = useContext(AuthContext);
-    const [updateProfile] = useMutation(UPDATEPROFILE,
-        {
-            refetchQueries: [{ query: GETME }],
-        }
-    );
+
+    const [updateProfile] = useMutation(UPDATEPROFILE,{
+        refetchQueries:[GETME]
+    });
+    
     const [editProfile, setEditProfile] = useState({
         userName: userAuth?.userName || "",
         email: userAuth?.email || "",
@@ -95,6 +95,8 @@ const EditProfileModal = ({ openEditModal, setOpenEditModal }) => {
 
                     <Button
                         onClick={() => setOpenEditModal(false)}
+                        variant="outlined"
+                        sx={{color:'#00A7B5'}}
                     >
                         Cancel
                     </Button>

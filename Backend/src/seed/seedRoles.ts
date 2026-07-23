@@ -6,6 +6,7 @@ import { Role } from "../modals/role.ts";
  * Creates default application roles
  * if they do not already exist.
 */
+
 export const seedRoles = async () => {
     const roleRepo = AppDataSource.getRepository(Role);
     const allRoles = ['Admin', 'Doctor', 'Patient'];

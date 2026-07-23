@@ -1,3 +1,8 @@
+/**
+ *  Shares TypeScript type and interface definitions used across
+ * application
+ */
+
 export type UserDetails = {
   id: number;
   userName: string;
@@ -28,9 +33,12 @@ export type DoctorDetails = {
   department: string;
   specialization: string;
   experience: number;
-  availableDays: Date;
+  availableDate: Date;
+  fromTime:String;
+  toTime:String;
   consultationFee: number
   status: boolean
+  user: UserDetails
 }
 
 export enum AppointmentStatus {

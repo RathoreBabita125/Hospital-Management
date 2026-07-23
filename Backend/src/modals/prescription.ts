@@ -2,10 +2,11 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn
 import { Appointment } from "./appointment.ts";
 
 /**
- * Prescription entity.
+ * @module Prescription/Entity
  * Stores medicines and instructions prescribed
  * for a specific appointment.
 */
+
 @Entity()
 export class Prescription {
     // Unique identifier for the prescription
@@ -24,7 +25,9 @@ export class Prescription {
     @Column({ type: 'text' })
     instructions!: string;
 
-    @OneToOne(() => Appointment)
+    @OneToOne(() => Appointment, {
+        onDelete:'CASCADE'
+    })
     @JoinColumn({ name: "appointmentId" })
     appointment!: Appointment;
 

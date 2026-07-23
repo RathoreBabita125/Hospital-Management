@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useMutation } from "@apollo/client/react";
-import { UPDATEDOCTOR } from "../../query/doctor/doctorQuery";
+import { GETDOCTORS, UPDATEDOCTOR } from "../../query/doctor/doctorQuery";
 import { inputValueHandler } from "../../validators/inputValueHandler";
 import { validateDoctorFields } from "../../validators/doctorValidate";
 import { handleOnBlurInput } from "../../validators/handleOnBlur";
@@ -9,7 +9,9 @@ import DoctorFormCompo from "./DoctorFormCompo";
 
 const EditDoctorModal = ({ open, handleClose, selectedDoctor, setOpenEditDoctor }) => {
 
-    const [updateDoctor] = useMutation(UPDATEDOCTOR);
+    const [updateDoctor] = useMutation(UPDATEDOCTOR,{
+        refetchQueries:[GETDOCTORS]
+    });
     const [doctor, setDoctor] = useState({
         userName: "",
         email: "",
@@ -19,7 +21,7 @@ const EditDoctorModal = ({ open, handleClose, selectedDoctor, setOpenEditDoctor 
         specialization: "",
         experience: "",
         consultationFee: "",
-        availableDays: "",
+        availableDate: "",
         status: true,
     });
     const [error, setError] = useState({
@@ -31,7 +33,7 @@ const EditDoctorModal = ({ open, handleClose, selectedDoctor, setOpenEditDoctor 
         specialization: "",
         experience: null,
         consultationFee: "",
-        availableDays: "",
+        availableDate: "",
         status: true,
     });
 
@@ -46,7 +48,7 @@ const EditDoctorModal = ({ open, handleClose, selectedDoctor, setOpenEditDoctor 
                 specialization: selectedDoctor.specialization,
                 experience: selectedDoctor.experience,
                 consultationFee: selectedDoctor.consultationFee,
-                availableDays: selectedDoctor.availableDays,
+                availableDate: selectedDoctor.availableDate,
                 status: selectedDoctor.status
             });
         }
@@ -75,7 +77,7 @@ const EditDoctorModal = ({ open, handleClose, selectedDoctor, setOpenEditDoctor 
                     specialization: doctor.specialization,
                     experience: Number(doctor.experience),
                     consultationFee: Number(doctor.consultationFee),
-                    availableDays: doctor.availableDays,
+                    availableDate: doctor.availableDate,
                     status: doctor.status,
                 },
             });

@@ -1,7 +1,7 @@
 /**
- * Admin GraphQL resolvers.
+ * @module Admin/Resolver
  * Handles doctor management operations such as
- * retrieving, creating, updating, deleting,
+ * fetching, creating, updating, deleting,
  * and changing doctor status.
  */
 import { ILike } from "typeorm";
@@ -13,30 +13,40 @@ import { User } from "../modals/user.ts";
 import { validateDoctor } from "../validators/doctorValidator.ts";
 import bcrypt from 'bcrypt';
 import { Appointment } from "../modals/appointment.ts";
-import { doctorInputFields, inputField } from "../constants/const.ts";
+import { doctorInputFields } from "../constants/const.ts";
+import { DoctorAvailability } from "../modals/doctorAvailability.ts";
 
 export const adminResolvers = {
     Query: {
 
-        // Fetch all registered doctors.
+        // Fetches all registered doctors.
         getDoctors: async (_: any, doctorData: DoctorDetails) => {
             const doctorRepo = AppDataSource.getRepository(Doctor);
-            const where: any = {};
-            if (doctorData.department) {
-                where.categoryName = ILike(`%${doctorData.department}%`);
-            }
+            const where: any = {
+                user: {},
+            };
+
             if (doctorData.userName) {
-                where.slug = ILike(`%${doctorData.userName}%`);
+                where.user.userName = ILike(`%${doctorData.userName}%`);
+            }
+            if (doctorData.department) {
+                where.department = ILike(`%${doctorData.department}%`);
             }
             if (doctorData.specialization) {
-                where.description = ILike(`%${doctorData.specialization}%`);
+                where.specialization = ILike(`%${doctorData.specialization}%`);
             }
-            return await doctorRepo.find({ where, relations: { user: true } });
+
+            return await doctorRepo.find({
+                where,
+                relations: {
+                    user: true,
+                    availability:true
+                },
+            });
         }
     },
 
     Mutation: {
-
         /**
          * Adds a new doctor.
          * Accessible only to users with the Admin role.
@@ -45,6 +55,7 @@ export const adminResolvers = {
         addDoctor: async (_: any, doctorData: DoctorDetails, context: any) => {
             const roleRepo = AppDataSource.getRepository(Role);
             const userRepo = AppDataSource.getRepository(User);
+            const availabilityRepo = AppDataSource.getRepository(DoctorAvailability);
 
             // Validate doctor input fields
             const valid = validateDoctor(doctorData, doctorInputFields);
@@ -80,10 +91,10 @@ export const adminResolvers = {
                     throw new Error("Doctor is already existed.");
                 }
 
-                // hashed password
+                // converts password into hashed password
                 const hashedPassword = await bcrypt.hash(doctorData.password, 10);
 
-                // Create user account for doctor
+                // Creates user account for doctor
                 const newUser = userRepo.create({
                     userName: doctorData.userName,
                     email: doctorData.email,
@@ -94,22 +105,37 @@ export const adminResolvers = {
 
                 const savedUser = await userRepo.save(newUser);
 
-                // Create doctor profile linked to the user
+                //creates doctor information
                 const newDoctor = doctorRepo.create({
                     department: doctorData.department,
                     specialization: doctorData.specialization,
                     experience: doctorData.experience,
-                    availableDays: doctorData.availableDays,
                     consultationFee: doctorData.consultationFee,
                     status: doctorData.status,
-                    user: savedUser
+                    user: savedUser,
                 });
-                await doctorRepo.save(newDoctor);
+
+                // saves doctor information
+                const savedDoctor = await doctorRepo.save(newDoctor);
+
+                //creates doctor's availability 
+                const availability = availabilityRepo.create({
+                    availableDate: new Date(doctorData.availableDate),
+                    fromTime: doctorData.fromTime,
+                    toTime: doctorData.toTime,
+                    doctor: savedDoctor
+                });
+
+                //saves doctor's availability 
+                await availabilityRepo.save(availability);
+
+                // returns response 
                 return {
                     message: "Doctor has been added successfully.",
                     doctor: newDoctor
                 }
             }
+            // throws error if unauthorize person try to add doctor.
             else {
                 throw new Error("Unauthorized Access!");
             }
@@ -117,10 +143,8 @@ export const adminResolvers = {
 
         /**
          * Updates an existing doctor's information.
-         * Accessible only to Admin users.
         */
         updateDoctor: async (_: any, doctorData: DoctorDetails, context: any) => {
-            console.log("updated doctor: ",doctorData);
             const roleRepo = AppDataSource.getRepository(Role);
             const userRepo = AppDataSource.getRepository(User);
 
@@ -145,16 +169,18 @@ export const adminResolvers = {
                         id: doctorData.id
                     },
                     relations: {
-                        user: true
+                        user: true,
+                        availability:true
                     }
                 });
 
+                //checks if doctor exists or not
                 if (!doctor) {
                     throw new Error("Doctor does not exist.");
                 }
 
-                // hashed password
-                const hashedPassword=await bcrypt.hash(doctorData.password, 10);
+                // converts password into hashed password
+                const hashedPassword = await bcrypt.hash(doctorData.password, 10);
 
                 // Update user and doctor information
                 doctor.user.userName = doctorData.userName;
@@ -164,11 +190,13 @@ export const adminResolvers = {
                 doctor.department = doctorData.department;
                 doctor.specialization = doctorData.specialization;
                 doctor.experience = doctorData.experience;
-                doctor.availableDays = doctorData.availableDays;
+                doctor.availableDate = doctorData.availableDate;
                 doctor.consultationFee = doctorData.consultationFee;
 
+                //saves doctor information
                 await userRepo.save(doctor.user);
                 await doctorRepo.save(doctor);
+
                 return {
                     message: "Doctor has been updated successfully.",
                     doctor: doctor
@@ -179,10 +207,7 @@ export const adminResolvers = {
             }
         },
 
-        /**
-         * Deletes a doctor and the associated user account.
-         * Accessible only to Admin users.
-        */
+        // Deletes a doctor and the associated user account.
         deleteDoctor: async (_: any, doctorData: DoctorDetails, context: any) => {
             const roleRepo = AppDataSource.getRepository(Role);
             const role = await roleRepo.findOne({
@@ -204,32 +229,21 @@ export const adminResolvers = {
                     }
                 });
 
+                // check doctor exists or not
                 if (!doctor) {
                     throw new Error("Doctor does not exist.")
                 }
 
-                const appointment = await appointmentRepo.findOne({
-                    where: {
-                        doctor: {
-                            id: doctor.id
-                        }
-                    }
-                });
-
-                if (appointment) {
-                    throw new Error(
-                        "Doctor cannot be deleted because appointments already exist."
-                    );
-                }
-
+                //finds doctor's user id
                 const userId = doctor.user.id;
 
                 // Delete associated user record
                 await doctorRepo.remove(doctor);
                 await userRepo.delete(userId);
+
+                // return action response
                 return {
                     message: "Doctor has been deleted successfully.",
-                    doctor: doctor
                 }
             }
             else {
@@ -237,10 +251,7 @@ export const adminResolvers = {
             }
         },
 
-        /**
-         * Marks a doctor as inactive.
-         * Accessible only to Admin users.
-         */
+        //  change doctor status whether he is active or inactive
         changeDoctorStatus: async (_: any, doctorData: DoctorDetails, context: any) => {
             const roleRepo = AppDataSource.getRepository(Role);
             const role = await roleRepo.findOne({
@@ -252,7 +263,7 @@ export const adminResolvers = {
                 const doctorRepo = AppDataSource.getRepository(Doctor);
                 const doctor = await doctorRepo.findOne({
                     where: {
-                        id: doctorData.id
+                        id: doctorData.id,
                     }
                 });
                 if (!doctor) {
@@ -260,11 +271,11 @@ export const adminResolvers = {
                 }
 
                 // update doctor status
-                doctor.status = false;
+                doctor.status = doctorData.status;
+                
                 await doctorRepo.save(doctor);
                 return {
                     message: "Doctor's status has been changed successfully.",
-                    doctor: doctor
                 }
             }
             else {

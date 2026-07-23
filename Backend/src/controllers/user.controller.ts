@@ -1,7 +1,7 @@
 /**
- * User GraphQL resolvers.
+ * @module User/Resolver
  * Handles user authentication, registration,
- * password management, and account operations.
+ * password and account operations.
  */
 import { UserDetails, UserResponse } from "../data/datatypes.ts";
 import { validateUserData } from "../validators/userValidator.ts";
@@ -13,6 +13,7 @@ import { generateToken } from "../utils/generateToken.ts";
 import jwt from 'jsonwebtoken';
 
 export const userResolvers = {
+
     Query: {
         /**
          * Retrieves all registered users
@@ -30,7 +31,6 @@ export const userResolvers = {
 
         // Fetch the currently authenticated user's profile
         getMe: async (_: any, __: any, context: any) => {
-            console.log("context inside getme", context);
             const userRepo = AppDataSource.getRepository(User);
             const loginUser = await userRepo.findOne({
                 where: {
@@ -40,8 +40,6 @@ export const userResolvers = {
                     role: true
                 }
             });
-            console.log("login usser: ", loginUser?.role);
-
             return loginUser;
         }
     },
@@ -72,10 +70,10 @@ export const userResolvers = {
                 throw new Error("Role Not Found");
             }
 
-            // change password in hash
+            // change password in hashed password
             const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-            // new user 
+            // creates new user 
             const newUser = userRepo.create({
                 userName: userData.userName,
                 email: userData.email,
@@ -84,8 +82,10 @@ export const userResolvers = {
                 role: role
             });
 
+            // saves new user in database
             const savedUser = await userRepo.save(newUser);
 
+            // generates token
             const token = generateToken({
                 id: savedUser.id,
                 role: role.id,
@@ -113,6 +113,7 @@ export const userResolvers = {
             const inputField: string[] = ["email", "password"];
             const isValiduser = validateUserData(userData, inputField);
 
+            // validates user login details 
             if (!isValiduser) {
                 throw new Error("Please provide valid details.")
             }
@@ -127,22 +128,22 @@ export const userResolvers = {
                 }
             });
 
-            //check if already user or not
+            //check if user already exists or not
             if (!user) {
                 throw new Error("User Not Found.");
             }
 
-            //check user is valid or not
+            //verifies user is valid or not
             const validUser = await bcrypt.compare(userData.password, user.password);
 
             if (!validUser) {
                 throw new Error("Invalid email or password.");
             }
 
-            // generate token
+            // generates token
             const token = generateToken(user);
 
-            //save token in cookies
+            //saves token in cookies
             context.res.cookie("token", token,
                 {
                     httpOnly: true,
@@ -151,10 +152,9 @@ export const userResolvers = {
                 }
             );
 
-            // decode the user data
+            // decodes the user data
             const decoded = jwt.verify(token, process.env.SECRET_KEY!);
-            console.log("decoded data is:", decoded);
-
+        
             return {
                 message: "you have logged in successfully.",
                 token: token,
@@ -171,6 +171,7 @@ export const userResolvers = {
             const userRepo = AppDataSource.getRepository(User);
             const user = await userRepo.findOne({ where: { email: userData.email } });
 
+            //checks user exists or not
             if (!user) {
                 throw new Error("User not found");
             }
@@ -178,9 +179,14 @@ export const userResolvers = {
                 throw new Error("Please provide valid details.")
             }
 
+            // converts user password into hashed password
             const hashedPassword = await bcrypt.hash(userData.password, 10);
             const newUserData = { ...user, password: hashedPassword }
+
+            // saves user's new hashed password in database
             await userRepo.save(newUserData)
+
+            //return successful response
             return {
                 message: "New password is generated successfully."
             }
@@ -193,18 +199,24 @@ export const userResolvers = {
         changePassword: async (_: any, userData: UserDetails, context: any): Promise<UserResponse> => {
             const inputField: string[] = ["password", "newPassword", "confirmPassword"];
             const isValidUser = validateUserData(userData, inputField);
-
+            
+            // validates user details 
             if (!isValidUser) {
                 throw new Error("Please enter valid details.");
             }
 
+            // fetches token from context
             const token = context.req.cookies.token;
+            
             const decoded = jwt.verify(token, process.env.SECRET_KEY!) as {
                 id: number;
                 email: string;
                 role: number;
             };
+
+            // gets the repository of user
             const userRepo = AppDataSource.getRepository(User);
+
             const user = await userRepo.findOne({
                 where: {
                     id: decoded.id
@@ -214,17 +226,24 @@ export const userResolvers = {
                 }
             });
 
+            //checks user exists or not 
             if (!user) {
                 throw new Error("User not found");
             }
 
             const checkValidUser = await bcrypt.compare(userData.password, user.password);
+
+            // verifies user details if valid or not.
             if (!checkValidUser) {
                 throw new Error("Invalid email or password.");
             }
 
+            //changes user new password into hashed password.
             const hashedPassword = await bcrypt.hash(userData.newPassword, 10);
+
+            // saves hashed password in the database.
             await userRepo.save({ ...user, password: hashedPassword })
+
             return {
                 message: "Password has been updated successfully."
             }
@@ -232,7 +251,7 @@ export const userResolvers = {
 
         /**
         * Updates the logged-in patient's profile information.
-        * Password is securely hashed before saving.
+        * Password is hashed before saving.
         */
         updateProfile: async (_: any, userData: UserDetails) => {
 
@@ -243,10 +262,12 @@ export const userResolvers = {
                 throw new Error("User Not Found");
             }
             
+            // updates the user existing details.
             user.userName = userData.userName,
             user.email = userData.email,
             user.phone = userData.phone
 
+            // saves updated details in database.
             await userRepo.save(user);
 
             return {
@@ -269,7 +290,5 @@ export const userResolvers = {
                 message: "You have successfully logged out."
             }
         },
-
-
     },
 }

@@ -1,13 +1,20 @@
 import { gql } from 'graphql-tag';
 
 /**
- * Appointment GraphQL schema.
+ * @module Appointment/Schema
  * Defines appointment-related types,
  * queries, and mutations for managing
  * doctor-patient appointments.
  */
 
 export const appointmentSchema = gql`
+
+    enum AppointmentStatus {
+        PENDING
+        CONFIRMED
+        COMPLETED
+        CANCELLED
+    }
 
     type User {
         id: ID!
@@ -26,6 +33,7 @@ export const appointmentSchema = gql`
         doctor:Doctor
         user:User
         createdAt:Date
+        prescriptions: [Prescription] 
     }
 
     type AppointmentResponse{
@@ -34,9 +42,29 @@ export const appointmentSchema = gql`
     }
 
     type Query{
+
         viewUpcomingAppointments:[Appointment]
+
         todayAppointments:[Appointment]
-        getAppointments:[Appointment]
+
+        getAppointments(
+            userName: String
+            doctorName: String
+            email: String
+            bloodGroup: String
+            gender: String
+            department: String
+            status:String
+            prescriptions:ID
+        ):[Appointment]
+
+        getAllAppointmentsDetails(
+            doctorName:String
+            patientName:String
+            department:String
+            specialization:String
+            status:String
+        ):[Appointment]
     }
 
     type Mutation{
@@ -50,26 +78,19 @@ export const appointmentSchema = gql`
         ):AppointmentResponse
 
         rescheduleAppointment(
-            id:ID
-            department:String
-            availableDate:Date
-            timeSlot:String
-            status:String
-            doctor:ID
-            user:ID
-        ):AppointmentResponse
-
-        acceptAppointment(
-            id:ID
-        ):AppointmentResponse
-
-        completeAppointment(
-            id:ID
-        ):AppointmentResponse
+            id: ID!
+            availableDate: Date!
+            timeSlot: String!
+        ): AppointmentResponse
 
         cancelAppointment(
             id:ID
         ):AppointmentResponse
+
+        updateAppointmentStatus(
+            id: ID
+            status: AppointmentStatus
+        ): AppointmentResponse
 
         
     }

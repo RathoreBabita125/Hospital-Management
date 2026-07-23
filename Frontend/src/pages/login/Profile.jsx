@@ -66,8 +66,7 @@ const Profile = () => {
 
                         <Chip
                             label={userAuth.role.roleName}
-                            color="success"
-                            sx={{ mt: 1 }}
+                            sx={{ backgroundColor: "#e0f7fa", color: "#00A7B5" }}
                         />
 
                         <Divider sx={{ my: 3 }} />

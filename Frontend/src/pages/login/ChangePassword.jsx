@@ -172,6 +172,8 @@ const ChangePasswordModal = ({ openPasswordModal, setOpenPasswordModal }) => {
                 <DialogActions sx={{ p: 3 }}>
                     <Button
                         onClick={() => setOpenPasswordModal(false)}
+                        variant="outlined"
+                        sx={{color:'#00A7B5'}}
                     >
                         Cancel
                     </Button>

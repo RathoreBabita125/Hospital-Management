@@ -1,13 +1,20 @@
 import { gql } from "@apollo/client";
 
 export const GETDOCTORS = gql`
-  query GetDoctor {
-    getDoctors {
+  query GetDoctor(
+    $userName:String
+    $department:String
+    $specialization:String
+  ){
+    getDoctors(
+      userName:$userName
+      department:$department
+      specialization:$specialization
+    ){
       id
       department
       specialization
       experience
-      availableDays
       consultationFee
       status
       user {
@@ -15,6 +22,12 @@ export const GETDOCTORS = gql`
         userName
         email
         phone
+      }
+      availability{
+        id
+        availableDate
+        fromTime
+        toTime
       }
     }
   }
@@ -29,9 +42,11 @@ export const ADDDOCTOR = gql`
     $department: String!
     $specialization: String!
     $experience: Int!
-    $availableDays: Date!
+    $availableDate: String!
     $consultationFee: Int!
-    $status: Boolean!
+    $fromTime: String!
+    $toTime: String!
+    $status: Boolean
   ) {
     addDoctor(
       userName: $userName
@@ -41,8 +56,10 @@ export const ADDDOCTOR = gql`
       department: $department
       specialization: $specialization
       experience: $experience
-      availableDays: $availableDays
+      availableDate: $availableDate
       consultationFee: $consultationFee
+      fromTime:$fromTime
+      toTime:$toTime
       status: $status
     ) {
       message
@@ -51,7 +68,6 @@ export const ADDDOCTOR = gql`
         department
         specialization
         experience
-        availableDays
         consultationFee
         status
         user {
@@ -75,10 +91,13 @@ export const UPDATEDOCTOR = gql`
     $department: String!
     $specialization: String!
     $experience: Int!
-    $availableDays: Date!
+    $availableDate: String!
+    $fromTime: String!
+    $toTime: String!
     $consultationFee: Int!
     $status: Boolean!
     $user: ID
+    $availability:ID
   ) {
     updateDoctor(
       id: $id
@@ -89,10 +108,13 @@ export const UPDATEDOCTOR = gql`
       department: $department
       specialization: $specialization
       experience: $experience
-      availableDays: $availableDays
+      availableDate: $availableDate
+      fromTime:$fromTime
+      toTime:$toTime
       consultationFee: $consultationFee
       status: $status
       user: $user
+      availability:$availability
     ) {
       message
       doctor {
@@ -100,7 +122,6 @@ export const UPDATEDOCTOR = gql`
         department
         specialization
         experience
-        availableDays
         consultationFee
         status
         user {
@@ -109,9 +130,33 @@ export const UPDATEDOCTOR = gql`
           email
           phone
         }
+        availability{
+          id
+          availableDate
+          fromTime
+          toTime
+        }
       }
     }
   }
+`;
+
+export const CHANGEDOCTORSTATUS = gql`
+    mutation ChangeDoctorStatus(
+      $id: ID!
+      $status:Boolean
+    ) {
+      changeDoctorStatus(
+          id: $id
+          status:$status
+        ) {
+          message
+          doctor {
+              id
+              status
+          }
+        }
+    }
 `;
 
 export const DELETEDOCTOR = gql`
@@ -124,3 +169,4 @@ export const DELETEDOCTOR = gql`
     }
   }
 `;
+

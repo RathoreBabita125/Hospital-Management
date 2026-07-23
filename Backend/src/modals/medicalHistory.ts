@@ -1,6 +1,10 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Appointment } from "./appointment.ts";
 
+/**
+ *  @module MedicalHistory/Entity.
+ */
+
 @Entity()
 export class MedicalHistory{
     @PrimaryGeneratedColumn()
@@ -33,7 +37,9 @@ export class MedicalHistory{
     @UpdateDateColumn({type:'date'})
     updatedAt!:Date
 
-    @OneToOne(()=>Appointment)
+    @OneToOne(()=>Appointment, {
+        onDelete:'CASCADE'
+    })
     @JoinColumn({ name: "appointmentId" })
     appointment!:Appointment;
 }
