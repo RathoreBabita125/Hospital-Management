@@ -20,7 +20,6 @@ import { LOGOUT } from "../query/login/userQuery";
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useApolloClient } from "@apollo/client/react";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const Navbar = ({ setMobileOpen, drawerWidth }) => {
 
@@ -112,25 +111,12 @@ const Navbar = ({ setMobileOpen, drawerWidth }) => {
           <Divider />
 
           <MenuItem onClick={() => {
-            navigate('/dashboard/profile')
+            navigate('/profile')
           }}>
             <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
             Profile
           </MenuItem>
           <Divider />
-
-          {
-            userAuth?.role?.roleName === "Patient" &&
-            <>
-              <MenuItem onClick={() => {
-                navigate('/dashboard/complete-profile')
-              }}>
-                <ListItemIcon><InfoOutlinedIcon fontSize="small" /></ListItemIcon>
-                Complete Info
-              </MenuItem>
-              <Divider />
-            </>
-          }
 
           <MenuItem onClick={handleLogout}>
             <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>

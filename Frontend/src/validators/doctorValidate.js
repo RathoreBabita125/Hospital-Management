@@ -1,17 +1,6 @@
-import {
-    emailInputCheck,
-    nameInputCheck,
-    passwordInputCheck,
-    phoneInputCheck,
-} from "../constants/const";
+import { emailInputCheck, nameInputCheck, passwordInputCheck, phoneInputCheck,} from "../constants/const";
 
-export const validateDoctorFields = (name, value, doctor) => {
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const selected = new Date(value);
-    selected.setHours(0, 0, 0, 0);
+export const validateDoctorFields = (name, value) => {
 
     switch (name) {
         case "userName":
@@ -60,24 +49,16 @@ export const validateDoctorFields = (name, value, doctor) => {
                 return "Consultation fee must be greater than 0.";
             return "";
 
-        case "availableDate":
-            if (!value) {
-                return "Available date is required.";
-            }
-
-            if (selected < today) {
-                return "Past date cannot be selected.";
-            }
+        case "qualification":
+            if (!value?.trim()) return "Qualification is required.";
             return "";
 
-        case "fromTime":
-            if (!value) return "Start time is required.";
+        case "address":
+            if (!value?.trim()) return "Address is required.";
             return "";
 
-        case "toTime":
-            if (!value) return "End time is required.";
-            if (doctor?.fromTime && value <= doctor.fromTime)
-                return "End time must be after start time.";
+        case "image":
+            if (!value) return "Profile Photo is required.";
             return "";
 
         default:

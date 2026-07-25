@@ -5,9 +5,9 @@
  * and mutations for managing doctor profiles.
 */
 
-import {gql} from 'graphql-tag';
+import { gql } from 'graphql-tag';
 
-export const doctorSchema=gql`
+export const doctorSchema = gql`
 
     type Doctor{
         id: ID!
@@ -16,7 +16,13 @@ export const doctorSchema=gql`
         experience: Int!
         consultationFee: Int!
         status: Boolean!
+        image:String
+        about:String
+        qualification:String
+        address:String
         user: User
+        dateOfBirth: Date
+        gender: String
         appointment: [Appointment]
         availability:[DoctorAvailability]
     }
@@ -46,9 +52,9 @@ export const doctorSchema=gql`
             department: String!
             specialization: String!
             experience: Int!
-            availableDate: String!
-            fromTime: String!
-            toTime: String!
+            qualification:String
+            address:String
+            image:String
             consultationFee: Int!
             status: Boolean
         ):DoctorResponse
@@ -58,12 +64,13 @@ export const doctorSchema=gql`
             userName: String
             email: String
             phone: String
+            password:String
             department: String
             specialization: String
             experience: Int
-            availableDate: String
-            fromTime: String
-            toTime: String
+            qualification:String
+            address:String
+            image:String
             consultationFee: Int
             status: Boolean
         ):DoctorResponse

@@ -21,7 +21,6 @@ import { ToastContainer } from "react-toastify";
 import PublicRoute from "./routes/PublicRoute";
 import Profile from "./pages/login/Profile";
 import MyAvailability from "./pages/doctor/MyAvailability";
-import CompletePatientProfile from "./pages/login/CompleteProfile";
 import DoctorList from "./pages/patient/DoctorList";
 
 const router = createBrowserRouter([
@@ -177,15 +176,6 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      {
-        path: "complete-profile",
-        element: (
-          <ProtectedRoute allowedRoles={["Patient"]}>
-            <CompletePatientProfile />
-          </ProtectedRoute>
-        ),
-      },
-
       {
         path: "profile",
         element: (

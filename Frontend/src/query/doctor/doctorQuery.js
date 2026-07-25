@@ -17,6 +17,10 @@ export const GETDOCTORS = gql`
       experience
       consultationFee
       status
+      image
+      about
+      qualification
+      address
       user {
         id
         userName
@@ -42,10 +46,10 @@ export const ADDDOCTOR = gql`
     $department: String!
     $specialization: String!
     $experience: Int!
-    $availableDate: String!
     $consultationFee: Int!
-    $fromTime: String!
-    $toTime: String!
+    $qualification:String
+    $address:String
+    $image:String
     $status: Boolean
   ) {
     addDoctor(
@@ -56,10 +60,10 @@ export const ADDDOCTOR = gql`
       department: $department
       specialization: $specialization
       experience: $experience
-      availableDate: $availableDate
+      qualification: $qualification
+      address:$address
+      image:$image
       consultationFee: $consultationFee
-      fromTime:$fromTime
-      toTime:$toTime
       status: $status
     ) {
       message
@@ -69,6 +73,9 @@ export const ADDDOCTOR = gql`
         specialization
         experience
         consultationFee
+        qualification
+        address
+        image
         status
         user {
           id
@@ -91,13 +98,11 @@ export const UPDATEDOCTOR = gql`
     $department: String!
     $specialization: String!
     $experience: Int!
-    $availableDate: String!
-    $fromTime: String!
-    $toTime: String!
+    $qualification:String
+    $address:String
+    $image:String
     $consultationFee: Int!
     $status: Boolean!
-    $user: ID
-    $availability:ID
   ) {
     updateDoctor(
       id: $id
@@ -108,13 +113,11 @@ export const UPDATEDOCTOR = gql`
       department: $department
       specialization: $specialization
       experience: $experience
-      availableDate: $availableDate
-      fromTime:$fromTime
-      toTime:$toTime
+      qualification: $qualification
+      address:$address
+      image:$image
       consultationFee: $consultationFee
       status: $status
-      user: $user
-      availability:$availability
     ) {
       message
       doctor {

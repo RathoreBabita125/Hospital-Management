@@ -25,7 +25,7 @@ export class Appointment {
     @Column({ type: 'text' })
     timeSlot!: string;
 
-    @Column({ type: 'enum', enum: AppointmentStatus, default: AppointmentStatus.PENDING })
+    @Column({ type: 'enum', enum: AppointmentStatus, default: AppointmentStatus.CONFIRMED })
     status!: AppointmentStatus;
 
     @CreateDateColumn({ type: 'date' })

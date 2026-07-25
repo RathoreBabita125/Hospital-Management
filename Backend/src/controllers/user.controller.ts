@@ -11,6 +11,8 @@ import bcrypt from 'bcrypt';
 import { Role } from "../modals/role.ts";
 import { generateToken } from "../utils/generateToken.ts";
 import jwt from 'jsonwebtoken';
+import { Doctor } from "../modals/doctor.ts";
+import { Patient } from "../modals/patient.ts";
 
 export const userResolvers = {
 
@@ -32,15 +34,15 @@ export const userResolvers = {
         // Fetch the currently authenticated user's profile
         getMe: async (_: any, __: any, context: any) => {
             const userRepo = AppDataSource.getRepository(User);
-            const loginUser = await userRepo.findOne({
-                where: {
-                    id: context.user.id
-                },
+            const user = await userRepo.findOne({
+                where: { id: context.user.id },
                 relations: {
-                    role: true
+                    role: true,
+                    patient: true,
+                    doctor: true
                 }
             });
-            return loginUser;
+            return user;
         }
     },
 
@@ -154,7 +156,7 @@ export const userResolvers = {
 
             // decodes the user data
             const decoded = jwt.verify(token, process.env.SECRET_KEY!);
-        
+
             return {
                 message: "you have logged in successfully.",
                 token: token,
@@ -199,7 +201,7 @@ export const userResolvers = {
         changePassword: async (_: any, userData: UserDetails, context: any): Promise<UserResponse> => {
             const inputField: string[] = ["password", "newPassword", "confirmPassword"];
             const isValidUser = validateUserData(userData, inputField);
-            
+
             // validates user details 
             if (!isValidUser) {
                 throw new Error("Please enter valid details.");
@@ -207,7 +209,7 @@ export const userResolvers = {
 
             // fetches token from context
             const token = context.req.cookies.token;
-            
+
             const decoded = jwt.verify(token, process.env.SECRET_KEY!) as {
                 id: number;
                 email: string;
@@ -253,26 +255,59 @@ export const userResolvers = {
         * Updates the logged-in patient's profile information.
         * Password is hashed before saving.
         */
-        updateProfile: async (_: any, userData: UserDetails) => {
+        updateProfile: async (_: any, profileData: any, context: any) => {
+            if (!context.user) {
+                throw new Error("Not authenticated.");
+            }
 
             const userRepo = AppDataSource.getRepository(User);
-            const user = await userRepo.findOne({ where: { email: userData.email } });
+            const user = await userRepo.findOne({
+                where: { id: context.user.id },
+                relations: { role: true },
+            });
 
             if (!user) {
-                throw new Error("User Not Found");
+                throw new Error("User not found.");
             }
-            
-            // updates the user existing details.
-            user.userName = userData.userName,
-            user.email = userData.email,
-            user.phone = userData.phone
 
-            // saves updated details in database.
+            // Update common User fields
+            if (profileData.userName !== undefined) user.userName = profileData.userName;
+            if (profileData.email !== undefined) user.email = profileData.email;
+            if (profileData.phone !== undefined) user.phone = profileData.phone;
+
             await userRepo.save(user);
 
+            const roleName = user.role?.roleName;
+
+            if (roleName === "Patient") {
+                const patientRepo = AppDataSource.getRepository(Patient);
+                const patient = await patientRepo.findOne({ where: { user: { id: user.id } } });
+
+                if (patient) {
+                    if (profileData.address !== undefined) patient.address = profileData.address;
+                    if (profileData.dateOfBirth !== undefined) patient.dateOfBirth = profileData.dateOfBirth;
+                    if (profileData.gender !== undefined) patient.gender = profileData.gender;
+                    if (profileData.bloodGroup !== undefined) patient.bloodGroup = profileData.bloodGroup;
+                    if (profileData.height !== undefined) patient.height = profileData.height;
+                    if (profileData.weight !== undefined) patient.weight = profileData.weight;
+                    if (profileData.age !== undefined) patient.age = profileData.age;
+                    await patientRepo.save(patient);
+                }
+            } else if (roleName === "Doctor") {
+                const doctorRepo = AppDataSource.getRepository(Doctor);
+                const doctor = await doctorRepo.findOne({ where: { user: { id: user.id } } });
+
+                if (doctor) {
+                    if (profileData.address !== undefined) doctor.address = profileData.address;
+                    if (profileData.dateOfBirth !== undefined) doctor.dateOfBirth = profileData.dateOfBirth;
+                    if (profileData.gender !== undefined) doctor.gender = profileData.gender;
+                    if (profileData.about !== undefined) doctor.about = profileData.about;
+                    await doctorRepo.save(doctor);
+                }
+            }
+
             return {
-                message: "You have successfully updated profile.",
-                patient: user
+                message: "Profile updated successfully.",
             };
         },
 

@@ -8,9 +8,32 @@ export const GETME = gql`
       email
       phone
       createdAt
-      role{
+      role {
         id
         roleName
+      }
+      patient {
+        id
+        age
+        gender
+        bloodGroup
+        address
+        dateOfBirth
+        emergencyNumber
+        height
+        weight
+      }
+      doctor {
+        id
+        department
+        specialization
+        experience
+        consultationFee
+        status
+        address
+        dateOfBirth
+        gender
+        about
       }
     }
   }
@@ -107,17 +130,33 @@ export const CHANGEPASSWORD = gql`
 `;
 
 export const UPDATEPROFILE = gql`
-  mutation UpdateProfile(
-    $userName: String!
-    $email: String!
-    $phone: String!
-  ) {
-    updateProfile(
-      userName: $userName
-      email: $email
-      phone: $phone
+    mutation UpdateProfile(
+        $userName: String
+        $email: String
+        $phone: String
+        $address: String
+        $dateOfBirth: Date
+        $gender: String
+        $bloodGroup: String
+        $height: Float
+        $weight: Float
+        $age: Int
+        $about: String
     ) {
-      message
+        updateProfile(
+            userName: $userName
+            email: $email
+            phone: $phone
+            address: $address
+            dateOfBirth: $dateOfBirth
+            gender: $gender
+            bloodGroup: $bloodGroup
+            height: $height
+            weight: $weight
+            age: $age
+            about: $about
+        ) {
+            message
+        }
     }
-  }
 `;

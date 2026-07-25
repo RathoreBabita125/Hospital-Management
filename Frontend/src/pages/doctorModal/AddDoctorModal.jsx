@@ -10,9 +10,11 @@ import DoctorFormCompo from "./DoctorFormCompo";
 import { doctorInputFields } from "../../constants/const";
 
 const AddDoctorModal = ({ handleClose, open, refetch}) => {
+
     const [addDoctor] = useMutation(ADDDOCTOR,{
         refetchQueries:[GETDOCTORS]
     });
+
     const [doctor, setDoctor] = useState({
         userName: "",
         email: "",
@@ -22,11 +24,12 @@ const AddDoctorModal = ({ handleClose, open, refetch}) => {
         specialization: "",
         experience: "",
         consultationFee: "",
-        availableDate: "",
-        fromTime: "",
-        toTime: "",
+        qualification:"",
+        address:"",
+        image:"",
         status: true,
     });
+    
     const [error, setError] = useState({
         userName: "",
         email: "",
@@ -36,9 +39,9 @@ const AddDoctorModal = ({ handleClose, open, refetch}) => {
         specialization: "",
         experience: "",
         consultationFee: "",
-        availableDate: "",
-        fromTime: "",
-        toTime: "",
+        qualification:"",
+        address:"",
+        image:null,
         status: true,
     });
 
@@ -69,9 +72,9 @@ const AddDoctorModal = ({ handleClose, open, refetch}) => {
                     department: doctor.department,
                     specialization: doctor.specialization,
                     experience: Number(doctor.experience),
-                    availableDate: doctor.availableDate,
-                    fromTime: doctor.fromTime,
-                    toTime: doctor.toTime,
+                    qualification:doctor.qualification,
+                    address:doctor.address,
+                    image: doctor.image || "",
                     consultationFee: Number(doctor.consultationFee),
                     status: doctor.status,
                 },
@@ -87,9 +90,9 @@ const AddDoctorModal = ({ handleClose, open, refetch}) => {
                 department: "",
                 specialization: "",
                 experience: "",
-                availableDate: "",
-                fromTime: "",
-                toTime: "",
+                qualification:"",
+                address:"",
+                image:"",
                 consultationFee: "",
                 status: true,
             });

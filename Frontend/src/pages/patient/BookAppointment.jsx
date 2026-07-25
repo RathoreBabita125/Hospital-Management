@@ -8,24 +8,43 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BOOKAPPOINTMENT, GETAPPOINTMENTS } from "../../query/patient/appointmentQuery";
 import { toast } from "react-toastify";
 import { GETDOCTORS } from "../../query/doctor/doctorQuery";
 import { allDepartments } from "../../constants/const";
+import { useLocation } from "react-router-dom";
+import { GETTIMESLOTS } from "../../query/doctor/doctorAvailability";
+import LoadingCompo from "../../common/Loading";
 
 const BookAppointment = () => {
+
     const [bookAppointment] = useMutation(BOOKAPPOINTMENT, {
         refetchQueries: [GETAPPOINTMENTS],
-        pollInterval: 5000,
     });
 
+    const { data: timeSlotData, loading: timeSlotLoading } = useQuery(GETTIMESLOTS);
+
+
+    const location = useLocation();
+    const modalSelectedDoctor = location.state?.doctor;
     const [appointment, setAppointment] = useState({
         doctor: "",
         department: "",
         availableDate: "",
         timeSlot: "",
     });
+
+    useEffect(() => {
+        if (modalSelectedDoctor) {
+            setAppointment({
+                doctor: modalSelectedDoctor.id,
+                department: modalSelectedDoctor.department,
+                availableDate: "",
+                timeSlot: "",
+            });
+        }
+    }, [modalSelectedDoctor]);
 
     const { data: doctorData } = useQuery(GETDOCTORS, {
         variables: {
@@ -34,6 +53,10 @@ const BookAppointment = () => {
         skip: !appointment.department,
         pollInterval: 5000,
     });
+
+    if (timeSlotLoading) return <LoadingCompo />
+
+    console.log("time slots data", timeSlotData);
 
     const formatTime = (time) => {
         if (!time) return "";
@@ -52,8 +75,12 @@ const BookAppointment = () => {
     );
 
     const availableSlots = selectedDoctor?.availability?.filter(
-        (slot) => !slot.isBooked
+        (slot) => !slot.status
     ) || [];
+
+    const slotsForSelectedDate = availableSlots.filter(
+        (slot) => slot.availableDate === appointment.availableDate
+    );
 
     const uniqueDates = [
         ...new Map(
@@ -61,9 +88,16 @@ const BookAppointment = () => {
         ).values(),
     ];
 
-    const slotsForSelectedDate = availableSlots.filter(
+    const selectedAvailability = availableSlots.find(
         (slot) => slot.availableDate === appointment.availableDate
     );
+
+    const timeSlots = timeSlotData?.getTimeSlots?.filter(
+        (timeslot) => timeslot.availability?.id === selectedAvailability?.id
+    ) || [];
+
+    console.log("time slots on basis available date: ", timeSlots);
+
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -237,7 +271,7 @@ const BookAppointment = () => {
                                 InputLabelProps={{ shrink: false }}
                             >
                                 {slotsForSelectedDate.length ? (
-                                    slotsForSelectedDate.map((slot) => {
+                                    timeSlots?.map((slot) => {
                                         const label = `${formatTime(slot.fromTime)} - ${formatTime(
                                             slot.toTime
                                         )}`;

@@ -81,11 +81,18 @@ export const validateDoctor=(doctorData:DoctorDetails, inputField:string[])=>{
             throw new Error("Consultation fee is required.")
         }
     }
+    
+    // Validate qualification field
+    if(inputField.includes('qualification')){
+        if(!doctorData.qualification){
+            throw new Error("Qualification is required.")
+        }
+    }
 
-    // Validate available date field
-    if(inputField.includes('availableDate')){
-        if(!doctorData.availableDate){
-            throw new Error("Available Day is required.")
+    // Validate address field
+    if(inputField.includes('address')){
+        if(!doctorData.address){
+            throw new Error("Address is required.")
         }
     }
 

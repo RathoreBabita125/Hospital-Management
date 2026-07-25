@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 import { Role } from './role.ts';
 import { Patient } from './patient.ts';
+import { Doctor } from './doctor.ts';
 
 /**
  * @module User/Entity.
@@ -36,5 +37,8 @@ export class User {
 
     @OneToOne(() => Patient, patient => patient.user)
     patient!: Patient;
+
+    @OneToOne(() => Doctor, (doctor) => doctor.user)
+    doctor?: Doctor;
 }
 

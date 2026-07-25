@@ -2,6 +2,7 @@ import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, Prim
 import { Appointment } from "./appointment.ts";
 import { User } from "./user.ts";
 import { DoctorAvailability } from "./doctorAvailability.ts";
+import { TimeSlot } from "./timeSlot.ts";
 
 /**
  *  @module Doctor/Entity.
@@ -15,36 +16,60 @@ export class Doctor {
     id!: number;
 
     @Column({ type: 'text' })
-    department!: string
+    department!: string;
 
     @Column({ type: 'text' })
-    specialization!: string
+    specialization!: string;
 
     @Column({ type: 'int' })
-    experience!: number
+    experience!: number;
 
     @Column({ type: 'int' })
-    consultationFee!: number
+    consultationFee!: number;
 
     @Column({ type: 'boolean' })
-    status!: boolean
+    status!: boolean;
 
-    @CreateDateColumn({type:'date'})
-    createdAt!:Date
+    @Column({ type: 'text', nullable: true })
+    qualification!: string;
 
-    @UpdateDateColumn({type:'date'})
-    updatedAt!:Date
+    @Column({ type: 'date', nullable: true })
+    dateOfBirth?: Date
+
+    @Column({ type: 'varchar', length: 20, nullable: true })
+    gender?: string
+
+    @Column({ type: 'text', nullable: true })
+    about!: string;
+
+    @Column({ type: "text", nullable: true })
+    image!: string;
+
+    @Column({ type: 'text', nullable: true })
+    address!: string;
+
+    @CreateDateColumn({ type: 'date' })
+    createdAt!: Date;
+
+    @UpdateDateColumn({ type: 'date' })
+    updatedAt!: Date;
 
     @OneToMany(() => Appointment, (appointment) => appointment.doctor)
-    appointment!: Appointment[]
+    appointment!: Appointment[];
 
     @OneToOne(() => User)
     @JoinColumn({ name: "userId" })
-    user!: User
+    user!: User;
 
     @OneToMany(() => DoctorAvailability, (availability) => availability.doctor, {
-        cascade:true
+        cascade: true
     })
-    availability!: DoctorAvailability[]
+    availability!: DoctorAvailability[];
+
+    @OneToMany(() => TimeSlot, (timeSlot) => timeSlot.doctor, {
+        cascade: true
+    })
+    timeSlot!: TimeSlot[];
+
 }
 

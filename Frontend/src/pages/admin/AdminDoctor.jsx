@@ -54,7 +54,7 @@ const AdminDoctor = () => {
         { label: "Specialization", value: "specialization" },
     ];
 
-    const filterField = ["userName", "department", "specialization"]
+    const filterField = ["userName", "department", "specialization"];
 
     if (doctorLoading) return <LoadingCompo />
 
@@ -143,7 +143,7 @@ const AdminDoctor = () => {
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{doctor.experience}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{doctor.consultationFee}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>
-                                                {new Date(doctor?.availability[0]?.availableDate).toLocaleDateString("en-GB")}
+                                                { doctor?.availability.length>0 ? new Date(doctor?.availability[0]?.availableDate).toLocaleDateString("en-GB") : '-'}
                                             </TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{doctor.status ? "Active" : "Inactive"}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>

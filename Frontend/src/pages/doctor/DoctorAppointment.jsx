@@ -115,9 +115,9 @@ const DoctorAppointment = () => {
                                             sx={{ backgroundColor: "#ffffff", "&:last-child td": { borderBottom: "none" }, border: '1px solid #b4e8ed' }}
                                         >
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{page * rowsPerPage + index + 1}</TableCell>
-                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{appointment.user.userName}</TableCell>
-                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{appointment.user.patient.age}</TableCell>
-                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{appointment.user.patient.gender}</TableCell>
+                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{appointment.user?.userName}</TableCell>
+                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{appointment?.user?.patient?.age}</TableCell>
+                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{appointment.user?.patient?.gender}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{appointment.department}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>
                                                 {new Date(appointment.availableDate).toLocaleDateString("en-GB")}

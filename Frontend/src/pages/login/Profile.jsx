@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
-import BadgeIcon from "@mui/icons-material/Badge";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { AuthContext } from "../../context/AuthContext";
 import { useContext, useState } from "react";
@@ -83,13 +82,8 @@ const Profile = () => {
                             </Box>
 
                             <Box display="flex" gap={2}>
-                                <BadgeIcon color="action" />
-                                <Typography>{userAuth?.role?.roleName} ID : {userAuth.id}</Typography>
-                            </Box>
-
-                            <Box display="flex" gap={2}>
                                 <CalendarMonthIcon color="action" />
-                                <Typography>Joined : {userAuth.createdAt}</Typography>
+                                <Typography>Joined : {new Date(userAuth.createdAt).toLocaleDateString()}</Typography>
                             </Box>
                         </Stack>
 
@@ -197,7 +191,7 @@ const Profile = () => {
                                 Joined On
                             </Typography>
                             <Typography fontWeight={600}>
-                                {userAuth?.createdAt && userAuth?.createdAt}
+                                {new Date(userAuth?.createdAt).toLocaleDateString()}
                             </Typography>
                         </Stack>
                     </Paper>

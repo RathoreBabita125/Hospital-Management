@@ -1,7 +1,4 @@
-/**
- *  Shares TypeScript type and interface definitions used across
- * application
- */
+// type, enum and interface definitions
 
 export type UserDetails = {
   id: number;
@@ -33,9 +30,9 @@ export type DoctorDetails = {
   department: string;
   specialization: string;
   experience: number;
-  availableDate: Date;
-  fromTime:String;
-  toTime:String;
+  qualification:string;
+  address:string;
+  image:string;
   consultationFee: number
   status: boolean
   user: UserDetails
@@ -76,4 +73,10 @@ export type MedicalHistoryDetails={
   recommendedTests:string[];
   followUpDate:Date;
   appointment:number;
+}
+
+export enum TimeSlotStatus{
+  BOOKED='BOOKED',
+  AVAILABLE="AVAILABLE",
+  BLOCKED="BLOCKED"
 }

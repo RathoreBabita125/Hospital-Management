@@ -1,6 +1,5 @@
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import MedicationIcon from "@mui/icons-material/Medication";
 import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
 import { Box, Grid, Stack, Toolbar, Typography } from "@mui/material";
 import CardComponent from "../../common/CardDash";
@@ -26,7 +25,7 @@ const PatientDashboard = () => {
 
     const consultedDoctors = prescriptionData?.getAllPrescriptions?.filter((prescription) => {
         return prescription?.appointment?.user?.id === userAuth.id;
-    })
+    }) || [];
 
     const today = new Date();
 
@@ -61,7 +60,7 @@ const PatientDashboard = () => {
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <CardComponent
                             title="Total Consultations"
-                            count={consultedDoctors.length}
+                            count={consultedDoctors?.length}
                             bgColor="#FCE4EC"
                             icon={
                                 <MedicalServicesIcon
@@ -73,7 +72,7 @@ const PatientDashboard = () => {
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <CardComponent
                             title="Upcoming Appointments"
-                            count={upcomingAppointments.length}
+                            count={upcomingAppointments?.length}
                             bgColor="#FFF8E1"
                             icon={
                                 <CalendarMonthIcon

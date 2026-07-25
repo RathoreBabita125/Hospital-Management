@@ -5,9 +5,7 @@ import { DELETEDOCTOR, GETDOCTORS } from "../../query/doctor/doctorQuery";
 
 const DeleteDoctorModal = ({open, handleClose, selectedDoctor, setOpenDeleteDoctor}) => {
     const [deleteDoctor] = useMutation(DELETEDOCTOR, {
-        refetchQueries:[{
-            query: GETDOCTORS
-        }]
+        refetchQueries:[GETDOCTORS]
     });
     const handleDeleteDoctor = async () => {
         try {

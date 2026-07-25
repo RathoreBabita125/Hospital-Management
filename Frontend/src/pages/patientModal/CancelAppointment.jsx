@@ -26,11 +26,16 @@ const CancelAppointmentModal = ({ open, selectedAppointment, setOpenCancelAppoin
     return (
         <Dialog 
             open={open} 
-            onClose={handleClose} 
+            onClose={(event, reason)=>{
+                if(reason==='backdropClick' || reason==='escapeKeyDown'){
+                    return;
+                }
+                handleClose();
+            }} 
             maxWidth="xs" 
             fullWidth
         >
-            <Box sx={{padding:2}}>
+            <Box sx={{padding:1}}>
                 <DialogTitle sx={{ fontWeight: 700, fontSize:22, color:'#00A7B5'}}>Cancel Appointment</DialogTitle>
                 <DialogContent>
                     <Typography variant="body1">
@@ -42,7 +47,7 @@ const CancelAppointmentModal = ({ open, selectedAppointment, setOpenCancelAppoin
                         Close
                     </Button>
                     <Button variant="contained" onClick={handleConfirmCancel} sx={{backgroundColor:' #00A7B5', color:'white'}}>
-                        Cancel Appointment
+                        Cancel
                     </Button>
                 </DialogActions>
             </Box>

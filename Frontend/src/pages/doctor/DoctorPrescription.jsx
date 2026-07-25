@@ -29,7 +29,7 @@ const DoctorPrescription = () => {
         medicine: '',
         appointmentDate: ''
     })
-    const { data: prescriptionData, loading: prescriptionLoading } = useQuery(GETMYPRESCRIPTIONS,{
+    const { data: prescriptionData, loading: prescriptionLoading } = useQuery(GETMYPRESCRIPTIONS, {
         variables: {
             userName: filter.userName,
             department: filter.department,
@@ -86,7 +86,7 @@ const DoctorPrescription = () => {
                             variant="outlined"
                             startIcon={<FilterListIcon />}
                             sx={{ color: '#00A7B5' }}
-                            onClick={()=>{
+                            onClick={() => {
                                 setOpenFilter(true)
                             }}
                         >
@@ -135,11 +135,9 @@ const DoctorPrescription = () => {
                                             </TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{prescription?.appointment?.department}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>
-                                                <TableCell align="center">
-                                                    {Array.isArray(prescription?.medicine)
-                                                        ? prescription.medicine.join(", ")
-                                                        : prescription?.medicine}
-                                                </TableCell>
+                                                {Array.isArray(prescription?.medicine)
+                                                    ? prescription.medicine.join(", ")
+                                                    : prescription?.medicine}
                                             </TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{prescription?.duration}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{prescription?.dosage}</TableCell>

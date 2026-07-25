@@ -5,11 +5,14 @@
  */
 import { ArrayContains, Between, ILike, MoreThan } from "typeorm";
 import { AppDataSource } from "../config/db.ts";
-import { AppointmentStatus, PrescriptionDetails } from "../data/datatypes.ts";
+import { AppointmentStatus, PrescriptionDetails, TimeSlotStatus } from "../data/datatypes.ts";
 import { Appointment } from "../modals/appointment.ts";
 import { Prescription } from "../modals/prescription.ts";
 import { Doctor } from "../modals/doctor.ts";
 import { DoctorAvailability } from "../modals/doctorAvailability.ts";
+import { validateAvailabilty } from "../validators/availabilityValidator.ts";
+import { TimeSlot } from "../modals/timeSlot.ts";
+import { toMinutes, toTimeString } from "../common/timechange.ts";
 
 export const doctorResolver = {
 
@@ -184,6 +187,17 @@ export const doctorResolver = {
 
             return availability;
         },
+
+        getTimeSlots:async()=>{
+            const timeSlotRepo=AppDataSource.getRepository(TimeSlot);
+            const timeSlots= await timeSlotRepo.find({
+                relations:{
+                    availability:true,
+                    doctor:true
+                }
+            })
+            return timeSlots;
+        }
     },
 
 
@@ -191,8 +205,8 @@ export const doctorResolver = {
 
         // Updates the status of an appointment.
         updateAppointmentStatus: async (_: any, appointmentData: any, context: any) => {
-            console.log("appointment status: ",appointmentData);
-            
+            console.log("appointment status: ", appointmentData);
+
             try {
                 const appointmentRepo = AppDataSource.getRepository(Appointment);
                 const appointment = await appointmentRepo.findOne({
@@ -357,7 +371,7 @@ export const doctorResolver = {
                 },
             });
 
-             // checks prescription exists or not
+            // checks prescription exists or not
             if (!prescription) {
                 throw new Error("Prescription not found.");
             }
@@ -389,21 +403,71 @@ export const doctorResolver = {
                 throw new Error("Doctor profile not found.");
             }
 
+            if (!availabilityData.slotDuration || availabilityData.slotDuration <= 0) {
+                throw new Error("Slot duration must be a positive number of minutes.");
+            }
+
+            const inputFields = ["availableDate", "fromTime", "toTime", "slotDuration"];
+            const valid = validateAvailabilty(inputFields, availabilityData);
+
+            if (!valid) {
+                throw new Error("Enter valid details");
+            }
+
             if (new Date(availabilityData.availableDate) < new Date()) {
                 throw new Error("Available date cannot be in the past.");
             }
 
             const availabilityRepo = AppDataSource.getRepository(DoctorAvailability);
+            const existingAvailability = await availabilityRepo.findOne({
+                where: {
+                    doctor: { id: doctor.id },
+                    availableDate: availabilityData.availableDate,
+                },
+            });
+
+            if (existingAvailability) {
+                throw new Error("You have already added availability for this date.");
+            }
+
+            const startMinutes = toMinutes(availabilityData.fromTime);
+            const endMinutes = toMinutes(availabilityData.toTime);
+
+            if (startMinutes >= endMinutes) {
+                throw new Error("From Time must be earlier than To Time.");
+            }
+
+            if (endMinutes - startMinutes < availabilityData.slotDuration) {
+                throw new Error("Time range is too short to fit even one slot of the selected duration.");
+            }
 
             const newAvailability = availabilityRepo.create({
                 availableDate: availabilityData.availableDate,
                 fromTime: availabilityData.fromTime,
                 toTime: availabilityData.toTime,
+                slotDuration: availabilityData.slotDuration,
                 isBooked: false,
                 doctor,
             });
 
             await availabilityRepo.save(newAvailability);
+
+            const timeSlotRepo = AppDataSource.getRepository(TimeSlot);
+
+            const slotsToCreate = [];
+            for (let start = startMinutes; start + availabilityData.slotDuration <= endMinutes; start += availabilityData.slotDuration) {
+                slotsToCreate.push(
+                    timeSlotRepo.create({
+                        fromTime: toTimeString(start),
+                        toTime: toTimeString(start + availabilityData.slotDuration),
+                        isBooked: false,
+                        availability: newAvailability,
+                        doctor,
+                    })
+                );
+            }
+
+            await timeSlotRepo.save(slotsToCreate);
 
             return {
                 message: "Availability added successfully.",
@@ -456,10 +520,10 @@ export const doctorResolver = {
             };
         },
 
-         /**
-         * Deletes an availability slot belonging to the
-         * logged-in doctor.
-         */     
+        /**
+        * Deletes an availability slot belonging to the
+        * logged-in doctor.
+        */
         deleteAvailability: async (_: any, availabilityData: any, context: any) => {
             if (!context.user) {
                 throw new Error("Not authenticated.");

@@ -22,10 +22,13 @@ export const userSchema = gql`
         newPassword:String
         phone:String!
         role:Role
+        height: Float
+        weight: Float
         createdAt:Date
         patient: Patient
+        doctor: Doctor
     }
-    
+
     type AuthResponse{
         message:String
         token:String
@@ -65,10 +68,18 @@ export const userSchema = gql`
         ):AuthResponse
 
         updateProfile(
-            userName:String
-            phone:String
-            email:String
-       ):AuthResponse
+            userName: String
+            email: String
+            phone: String
+            address: String
+            dateOfBirth: Date
+            gender: String
+            bloodGroup: String
+            height: Float
+            weight: Float
+            age: Int
+            about: String
+        ): AuthResponse
 
         logout:AuthResponse
 

@@ -63,7 +63,7 @@ export const patientResolvers = {
                     },
                 },
                 order: {
-                    availableDate: "ASC",
+                    createdAt: "ASC",
                 },
             });
             return appointments;
@@ -92,59 +92,6 @@ export const patientResolvers = {
     },
 
     Mutation: {
-
-        // Completes the profile for a newly registered patient.
-        completePatientProfile: async (_: any, patientData: any, context: any) => {
-            const patientRepo = AppDataSource.getRepository(Patient);
-            const userRepo = AppDataSource.getRepository(User);
-
-            if (!context.user) {
-                throw new Error("First register to complete profile.");
-            }
-
-            const user = await userRepo.findOne({
-                where: {
-                    id: context.user.id
-                }
-            });
-
-            if (!user) {
-                throw new Error("User not found");
-            }
-
-            const existingPatient = await patientRepo.findOne({
-                where: {
-                    user: {
-                        id: user.id
-                    }
-                },
-                relations: {
-                    user: true
-                }
-            });
-
-            if (existingPatient) {
-                throw new Error("Profile already completed.");
-            }
-
-            const patient = patientRepo.create({
-                age: patientData.age,
-                gender: patientData.gender,
-                bloodGroup: patientData.bloodGroup,
-                address: patientData.address,
-                dateOfBirth: patientData.dateOfBirth,
-                emergencyNumber: patientData.emergencyNumber,
-                user
-            });
-
-            await patientRepo.save(patient);
-
-            return {
-                message: "Profile completed successfully.",
-                patient
-            };
-        },
-
         /**
          * Books a new appointment with a doctor.
          * Validates doctor availability and prevents

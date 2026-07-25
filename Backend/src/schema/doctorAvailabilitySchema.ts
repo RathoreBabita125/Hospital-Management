@@ -8,13 +8,24 @@ import {gql} from 'graphql-tag';
 
 export const doctorAvailabilitySchema=gql`
 
+    type TimeSlot{
+        id:ID!
+        fromTime:String!
+        toTime:String!
+        isBooked:Boolean
+        availability:DoctorAvailability
+        doctor:Doctor
+    }
+
     type DoctorAvailability {
         id: ID!
         availableDate: Date!
         fromTime: String!
         toTime: String!
-        isBooked: Boolean!
+        slotDuration: Int!
+        isBooked:Boolean
         doctor: Doctor
+        timeSlot:[TimeSlot]
     }
 
     type AvailabilityResponse {
@@ -24,14 +35,17 @@ export const doctorAvailabilitySchema=gql`
 
     type Query {
         getMyAvailability: [DoctorAvailability]
+        getTimeSlots:[TimeSlot]
     }
 
     type Mutation {
     
         addAvailability(
-            availableDate: Date!
-            fromTime: String!
-            toTime: String!
+            availableDate: Date
+            fromTime: String
+            toTime: String
+            slotDuration:Int
+            isBooked:Boolean
             doctor:ID
         ): AvailabilityResponse
 
@@ -40,6 +54,8 @@ export const doctorAvailabilitySchema=gql`
             availableDate: Date
             fromTime: String
             toTime: String
+            slotDuration:Int
+            isBooked:Boolean
             doctor:ID
         ): AvailabilityResponse
 

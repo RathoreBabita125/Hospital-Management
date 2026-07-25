@@ -30,6 +30,12 @@ export class Patient {
     @Column({type:"varchar", length:15})
     emergencyNumber!:string
 
+    @Column({ type: 'float', nullable: true })
+    height?: number
+
+    @Column({ type: 'float', nullable: true })
+    weight?: number
+
     @OneToOne(()=>User)
     @JoinColumn()
     user!:User

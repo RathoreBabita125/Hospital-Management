@@ -16,7 +16,9 @@ export const patientSchema = gql`
         address:String
         role:ID
         dateOfBirth:Date
-        emergencyNumber: String!
+        emergencyNumber: String
+        height: Float
+        weight: Float
         user:User
     }
 
@@ -30,15 +32,6 @@ export const patientSchema = gql`
     }
 
     type Mutation{
-
-        completePatientProfile(
-            age: Int!
-            gender: String!
-            bloodGroup: String!
-            address: String!
-            dateOfBirth: Date!
-            emergencyNumber: String!
-        ): PatientResponse
 
         addPatient(
             age: Int!

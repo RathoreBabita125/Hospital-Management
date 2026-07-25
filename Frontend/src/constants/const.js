@@ -6,7 +6,7 @@ export const phoneInputCheck = /^[6-9]\d{9}$/;
 export const appointmentColumn = ["AppointmentID", "Doctor", "Department", "Available Date", "Time Slot", "Status"];
 
 //doctor form input fields
-export const doctorInputFields = ["userName", "email", "password", "phone", "department", "specialization", "experience", "consultationFee", "availableDate", "status"];
+export const doctorInputFields = ["userName", "email", "password", "phone", "department", "specialization", "experience", "consultationFee", "qualification", "address", "image", "status"];
 
 // status
 export const statusOptions = ["Active", "Inactive"];
@@ -28,6 +28,10 @@ export const prescriptionInputFields = [
     "duration",
     "instructions",
 ];
+
+//time slot duration
+
+export const timeSlotDuration=[10, 20, 30, 40, 50, 60];
 
 // all departments 
 export const allDepartments = [

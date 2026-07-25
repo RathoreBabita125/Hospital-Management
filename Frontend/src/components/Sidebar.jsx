@@ -149,26 +149,6 @@ const Sidebar = ({ mobileOpen, setMobileOpen, drawerWidth }) => {
                                     textDecoration: "none",
                                     color: "inherit",
                                 }}
-                                to='doctor-patient'
-                            >
-                                {({ isActive }) => (
-                                    <ListItemButton
-                                        selected={isActive}
-                                        sx={showActiveStyle}
-                                    >
-                                        <ListItemIcon>
-                                            <PersonalInjuryIcon sx={{ color: !isActive ? '#00A7B5' : "white" }} />
-                                        </ListItemIcon>
-                                        <ListItemText primary="My Patients" />
-                                    </ListItemButton>
-                                )}
-                            </NavLink>
-
-                            <NavLink
-                                style={{
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                }}
                                 to='my-availability'
                             >
                                 {({ isActive }) => (

@@ -62,5 +62,4 @@ const ViewPrescriptionModal = ({ open, onClose, prescription }) => {
         </Dialog>
     );
 };
-
 export default ViewPrescriptionModal;

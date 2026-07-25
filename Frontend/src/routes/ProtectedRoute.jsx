@@ -13,19 +13,11 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/login" replace />;
   }
 
-  //  when patient complete profile
-  if (
-    userAuth.role.roleName === "Patient" &&
-    userAuth.patient
-  ) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   if (allowedRoles && !allowedRoles.includes(userAuth?.role?.roleName)) {
     return <Navigate to="/unauthorize" replace />;
   }
 
   return children;
-  
+
 };
 export default ProtectedRoute;

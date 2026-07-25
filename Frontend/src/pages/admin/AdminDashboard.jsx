@@ -79,7 +79,7 @@ const AdminDashboard = () => {
                     </Grid>
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <CardComponent
-                            title="Total Prescriptions"
+                            title="Total Consultations"
                             count={totalPrescription}
                             bgColor="#E8F5E9"
                             icon={

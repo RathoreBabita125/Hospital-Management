@@ -17,8 +17,8 @@ import { doctorInputFields } from "../constants/const.ts";
 import { DoctorAvailability } from "../modals/doctorAvailability.ts";
 
 export const adminResolvers = {
-    Query: {
 
+    Query: {
         // Fetches all registered doctors.
         getDoctors: async (_: any, doctorData: DoctorDetails) => {
             const doctorRepo = AppDataSource.getRepository(Doctor);
@@ -40,7 +40,7 @@ export const adminResolvers = {
                 where,
                 relations: {
                     user: true,
-                    availability:true
+                    availability: true
                 },
             });
         }
@@ -63,6 +63,7 @@ export const adminResolvers = {
             if (!valid) {
                 throw new Error("Enter valid details.")
             }
+            
             const adminRole = await roleRepo.findOne({
                 where: {
                     id: context.user.role
@@ -76,6 +77,7 @@ export const adminResolvers = {
                         roleName: "Doctor"
                     }
                 });
+
                 if (!doctorRole) {
                     throw new Error("Doctor role not found");
                 }
@@ -111,23 +113,17 @@ export const adminResolvers = {
                     specialization: doctorData.specialization,
                     experience: doctorData.experience,
                     consultationFee: doctorData.consultationFee,
+                    qualification: doctorData.qualification,
+                    address: doctorData.address,
+                    image:doctorData.image,
                     status: doctorData.status,
                     user: savedUser,
                 });
-
+                
+                console.log("Doctor Image:", doctorData.image);
+                
                 // saves doctor information
                 const savedDoctor = await doctorRepo.save(newDoctor);
-
-                //creates doctor's availability 
-                const availability = availabilityRepo.create({
-                    availableDate: new Date(doctorData.availableDate),
-                    fromTime: doctorData.fromTime,
-                    toTime: doctorData.toTime,
-                    doctor: savedDoctor
-                });
-
-                //saves doctor's availability 
-                await availabilityRepo.save(availability);
 
                 // returns response 
                 return {
@@ -170,7 +166,7 @@ export const adminResolvers = {
                     },
                     relations: {
                         user: true,
-                        availability:true
+                        availability: true
                     }
                 });
 
@@ -190,8 +186,10 @@ export const adminResolvers = {
                 doctor.department = doctorData.department;
                 doctor.specialization = doctorData.specialization;
                 doctor.experience = doctorData.experience;
-                doctor.availableDate = doctorData.availableDate;
                 doctor.consultationFee = doctorData.consultationFee;
+                doctor.qualification = doctorData.qualification;
+                doctor.address = doctorData.address;
+                doctor.image = doctorData.image;
 
                 //saves doctor information
                 await userRepo.save(doctor.user);
@@ -272,7 +270,7 @@ export const adminResolvers = {
 
                 // update doctor status
                 doctor.status = doctorData.status;
-                
+
                 await doctorRepo.save(doctor);
                 return {
                     message: "Doctor's status has been changed successfully.",

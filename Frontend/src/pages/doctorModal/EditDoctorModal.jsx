@@ -12,6 +12,7 @@ const EditDoctorModal = ({ open, handleClose, selectedDoctor, setOpenEditDoctor 
     const [updateDoctor] = useMutation(UPDATEDOCTOR,{
         refetchQueries:[GETDOCTORS]
     });
+
     const [doctor, setDoctor] = useState({
         userName: "",
         email: "",
@@ -21,9 +22,12 @@ const EditDoctorModal = ({ open, handleClose, selectedDoctor, setOpenEditDoctor 
         specialization: "",
         experience: "",
         consultationFee: "",
-        availableDate: "",
+        qualification:"",
+        address:"",
+        image:"",
         status: true,
     });
+
     const [error, setError] = useState({
         userName: "",
         email: "",
@@ -33,7 +37,9 @@ const EditDoctorModal = ({ open, handleClose, selectedDoctor, setOpenEditDoctor 
         specialization: "",
         experience: null,
         consultationFee: "",
-        availableDate: "",
+        qualification:"",
+        address:"",
+        image:"",
         status: true,
     });
 
@@ -48,7 +54,9 @@ const EditDoctorModal = ({ open, handleClose, selectedDoctor, setOpenEditDoctor 
                 specialization: selectedDoctor.specialization,
                 experience: selectedDoctor.experience,
                 consultationFee: selectedDoctor.consultationFee,
-                availableDate: selectedDoctor.availableDate,
+                qualification:selectedDoctor.qualification,
+                address:selectedDoctor.address,
+                image:selectedDoctor.image,
                 status: selectedDoctor.status
             });
         }
@@ -77,7 +85,9 @@ const EditDoctorModal = ({ open, handleClose, selectedDoctor, setOpenEditDoctor 
                     specialization: doctor.specialization,
                     experience: Number(doctor.experience),
                     consultationFee: Number(doctor.consultationFee),
-                    availableDate: doctor.availableDate,
+                    qualification:doctor.qualification,
+                    address:doctor.address,
+                    image:doctor.image,
                     status: doctor.status,
                 },
             });

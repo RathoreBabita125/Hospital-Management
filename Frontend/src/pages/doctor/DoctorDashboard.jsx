@@ -1,30 +1,32 @@
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import MedicationIcon from "@mui/icons-material/Medication";
-import AssessmentIcon from "@mui/icons-material/Assessment";
 import { Box, Grid, Stack, Toolbar, Typography } from "@mui/material";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import CardComponent from "../../common/CardDash";
 import GroupsIcon from "@mui/icons-material/Groups";
 import { GETAPPOINTMENTS } from "../../query/patient/appointmentQuery";
-import { GETMYPRESCRIPTIONS } from "../../query/doctor/Prescription";
 import { useQuery } from "@apollo/client/react";
 import LoadingCompo from "../../common/Loading";
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
 
 const DoctorDashboard = () => {
 
     const { userAuth } = useContext(AuthContext);
     const { data: appointmentData, loading: appointmentLoading } = useQuery(GETAPPOINTMENTS);
-    const { data: prescriptionData, loading: prescriptionLoading } = useQuery(GETMYPRESCRIPTIONS);
+    
+    if ( appointmentLoading) return <LoadingCompo />
 
-    if ( appointmentLoading || prescriptionLoading) return <LoadingCompo />
-
-    const totalMyAppointments = appointmentData?.getAppointments?.filter((apointment) => {
-        return apointment?.doctor?.user?.id === userAuth.id;
+    const totalMyAppointments = appointmentData?.getAppointments?.filter((appointment) => {
+        return appointment?.doctor?.user?.id === userAuth.id;
     }).length;
 
-    const totalMyPrescription = prescriptionData?.getMyPrescriptions?.filter((prescription) => {
-        return prescription?.appointment?.doctor?.user?.id === userAuth.id;
+    const totalConsultations = appointmentData?.getAppointments?.filter((appointment) => {
+        return appointment?.status==="COMPLETED" && appointment?.doctor?.user?.id === userAuth.id;
+    }).length;
+
+    const totalPendingAppointments = appointmentData?.getAppointments?.filter((appointment) => {
+        return appointment?.status==="PENDING" && appointment?.doctor?.user?.id === userAuth.id;
     }).length;
 
     const totalMyPatients = [
@@ -40,11 +42,6 @@ const DoctorDashboard = () => {
                 ])
         ).values(),
     ].length;
-
-    const totalMyReports = prescriptionData?.getMyPrescriptions?.filter(
-        (prescription) =>
-            prescription?.appointment?.doctor?.user?.id === userAuth.id
-    ).length;
 
     return (
         <>
@@ -81,8 +78,8 @@ const DoctorDashboard = () => {
                     </Grid>
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <CardComponent
-                            title="Total Prescriptions"
-                            count={totalMyPrescription}
+                            title="Total Consultations"
+                            count={totalConsultations}
                             bgColor="#E8F5E9"
                             icon={
                                 <MedicationIcon
@@ -93,12 +90,12 @@ const DoctorDashboard = () => {
                     </Grid>
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <CardComponent
-                            title="Total Reports"
-                            count={totalMyReports}
-                            bgColor="#E0F2F1"
+                            title="Pending Appointments"
+                            count={totalPendingAppointments}
+                            bgColor="#E8F5E9"
                             icon={
-                                <AssessmentIcon
-                                    sx={{ color: "#00897B", fontSize: 32 }}
+                                <PendingActionsIcon
+                                    sx={{ color: "#2E7D32", fontSize: 32 }}
                                 />
                             }
                         />

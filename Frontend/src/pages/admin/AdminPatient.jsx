@@ -114,11 +114,11 @@ const AdminPatient = () => {
                                         >
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{page * rowsPerPage + index + 1}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{patient?.user?.userName}</TableCell>
-                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{patient?.user?.patient?.gender}</TableCell>
-                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{patient?.user?.patient?.age}</TableCell>
-                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{patient?.user?.patient?.emergencyNumber}</TableCell>
+                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{patient?.user?.patient?.gender ? patient?.user?.patient?.gender : '-'}</TableCell>
+                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{patient?.user?.patient?.age ? patient?.user?.patient?.age : '-'}</TableCell>
+                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{patient?.user?.phone}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{patient?.user?.email}</TableCell>
-                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{patient?.user?.patient?.bloodGroup}</TableCell>
+                                            <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{patient?.user?.patient?.bloodGroup ? patient?.user?.patient?.bloodGroup : '-'}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{patient?.doctor?.user?.userName}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>{patient?.doctor?.department}</TableCell>
                                             <TableCell align="center" sx={{ border: '1px solid #b4e8ed' }}>

@@ -21,12 +21,13 @@ const ViewDoctorModal = ({open, handleClose, selectedDoctor, setOpenViewDoctor})
                     <Stack spacing={2} mt={1}>
                         <Typography><strong>Doctor Name :</strong> {selectedDoctor?.user?.userName}</Typography>
                         <Typography><strong>Department :</strong> {selectedDoctor?.department}</Typography>
+                        <Typography><strong>Qualification :</strong> {selectedDoctor?.qualification}</Typography>
                         <Typography><strong>Specialization :</strong> {selectedDoctor?.specialization}</Typography>
-                        <Typography><strong>Available Date :</strong> {selectedDoctor?.availableDate}</Typography>
                         <Typography><strong>Consultation Fee :</strong> {selectedDoctor?.consultationFee}</Typography>
                         <Typography><strong>Status :</strong> {selectedDoctor?.status && "Active"}</Typography>
                         <Typography><strong>Email :</strong> {selectedDoctor?.user?.email}</Typography>
                         <Typography><strong>Contact :</strong> {selectedDoctor?.user?.phone}</Typography>
+                        <Typography><strong>Address :</strong> {selectedDoctor?.address}</Typography>
                     </Stack>
                 </DialogContent>
                 <DialogActions>

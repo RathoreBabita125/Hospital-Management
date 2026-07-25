@@ -16,7 +16,7 @@ export const dateField=/^\d{4}-\d{2}-\d{2}$/;
 export const allowedFileTypes = [ "pdf", "jpeg", "png", "jpg"];
 
 //doctor form input fields
-export const doctorInputFields = ["userName", "email", "password", "phone", "department", "specialization", "experience", "consultationFee", "availableDate", "status"];
+export const doctorInputFields = ["userName", "email", "password", "phone", "department", "specialization", "experience", "consultationFee", "qualification", "address", "image", "status"];
 
 
 

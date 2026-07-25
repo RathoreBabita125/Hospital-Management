@@ -7,6 +7,7 @@ export const GETMYAVAILABILITY = gql`
             availableDate
             fromTime
             toTime
+            slotDuration
             isBooked
             doctor{
                 id
@@ -16,16 +17,37 @@ export const GETMYAVAILABILITY = gql`
     }
 `;
 
+export const GETTIMESLOTS=gql`
+    query GetTimeSlots{
+        getTimeSlots{
+            fromTime
+            toTime
+            availability{
+                id
+                availableDate
+                fromTime
+                toTime
+                isBooked
+            }
+            doctor{
+                id
+            }
+        }
+    }
+`
+
 export const ADDAVAILABILITY = gql`
     mutation AddAvailability(
         $availableDate: Date!
         $fromTime: String!
         $toTime: String!
+        $slotDuration:Int!
     ) {
         addAvailability(
             availableDate: $availableDate
             fromTime: $fromTime
             toTime: $toTime
+            slotDuration:$slotDuration
         ) {
             message
             availability {
@@ -33,7 +55,13 @@ export const ADDAVAILABILITY = gql`
                 availableDate
                 fromTime
                 toTime
-                isBooked
+                slotDuration
+                timeSlot {
+                    id
+                    fromTime
+                    toTime
+                    isBooked
+                }
             }
         }
     }
@@ -45,12 +73,14 @@ export const UPDATEAVAILABILITY = gql`
         $availableDate: Date
         $fromTime: String
         $toTime: String
+        $slotDuration:Int
     ) {
         updateAvailability(
             id: $id
             availableDate: $availableDate
             fromTime: $fromTime
             toTime: $toTime
+            slotDuration:$slotDuration
         ) {
             message
             availability {
@@ -58,7 +88,7 @@ export const UPDATEAVAILABILITY = gql`
                 availableDate
                 fromTime
                 toTime
-                isBooked
+                slotDuration
             }
         }
     }

@@ -15,11 +15,9 @@ import { Patient } from '../modals/patient.ts';
 import { Document } from '../modals/document.ts';
 import { MedicalHistory } from '../modals/medicalHistory.ts';
 import { DoctorAvailability } from '../modals/doctorAvailability.ts';
+import { TimeSlot } from '../modals/timeSlot.ts';
 
-/**
- * Main database connection instance.
- */
-
+//  Main database connection instance.
 export const AppDataSource=new DataSource({
     type:'postgres',
     username:"postgres",
@@ -29,6 +27,6 @@ export const AppDataSource=new DataSource({
     port:5432,
 
     // Registered entity classes
-    entities:[User, Role, Doctor, Patient, Appointment, Prescription, Document, MedicalHistory, DoctorAvailability],
+    entities:[User, Role, Doctor, Patient, Appointment, Prescription, Document, MedicalHistory, DoctorAvailability, TimeSlot],
 
 });
